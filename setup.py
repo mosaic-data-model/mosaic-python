@@ -7,9 +7,7 @@
 #  the file LICENSE.txt, distributed as part of this software.
 #-----------------------------------------------------------------------------
 
-from distutils.core import setup, Command
-from unittest import TextTestRunner
-import copy
+from setuptools import setup, Command
 import os
 import sys
 
@@ -21,6 +19,8 @@ commands = {}
 
 ##################################################
 # Run unit tests
+
+from unittest import TextTestRunner
 
 class TestCommand(Command):
     """Runs the unit tests"""

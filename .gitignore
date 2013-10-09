@@ -5,3 +5,4 @@ doc/build/
 *.pyc
 *pycache*
 tests/*.h5
+lib/pyMosaic.egg-info
