@@ -1,0 +1,1 @@
+../../../mosaic-specification/doc/source/pdb_convention.rst

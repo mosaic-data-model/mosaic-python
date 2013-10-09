@@ -1,0 +1,7 @@
+MANIFEST
+build/
+dist/
+doc/build/
+*.pyc
+*pycache*
+tests/*.h5

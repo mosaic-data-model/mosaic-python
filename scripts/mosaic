@@ -1,0 +1,58 @@
+#!python
+# -*- python -*-
+
+#-----------------------------------------------------------------------------
+#       Copyright (C) 2013 The Mosaic Development Team
+#
+#  Distributed under the terms of the BSD License.  The full license is in
+#  the file LICENSE.txt, distributed as part of this software.
+#-----------------------------------------------------------------------------
+
+import os
+import string
+import sys
+
+from mosaic.xml_io import XMLReader, XMLWriter
+from mosaic.hdf5 import HDF5Store
+
+if len(sys.argv) != 3:
+    sys.stderr.write("Usage:\n")
+    sys.stderr.write(" mosaic input_file output_file\n")
+    raise SystemExit
+
+in_file, out_file = sys.argv[1:]
+
+if '.' in in_file:
+    name, ext = os.path.splitext(in_file)
+    if ext == '.xml':
+        source = XMLReader(in_file)
+    elif ext == '.h5':
+        source = HDF5Store(in_file)
+    elif ext == '.cif':
+        from mosaic_pdb.import_structure import make_models
+        source = make_models(in_file)
+    else:
+        sys.stderr.write("Unknown input file format %s\n" % ext)
+        raise SystemExit
+elif len(in_file) == 4 and in_file[0] in string.digits:
+    # Assume PDB code
+    from mosaic_pdb.import_structure import make_models
+    source = make_models(pdb_code=in_file)
+
+
+if '.' in out_file:
+    name, ext = os.path.splitext(out_file)
+    if ext == '.xml':
+        dest = XMLWriter(out_file)
+    elif ext == '.h5':
+        dest = HDF5Store(out_file, 'w')
+    else:
+        sys.stderr.write("Unknown output file format %s\n" % ext)
+        raise SystemExit
+
+for name, data in source:
+    # convert name to str in case it's unicode
+    dest.store(str(name), data)
+
+source.close()
+dest.close()

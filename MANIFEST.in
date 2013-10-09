@@ -1,0 +1,4 @@
+include LICENSE.txt README.txt
+recursive-include tests *.py
+recursive-include doc *.py *.rst *.txt Makefile
+prune doc/build

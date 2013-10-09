@@ -1,0 +1,1 @@
+../../../mosaic-specification/doc/source/data_model.rst
