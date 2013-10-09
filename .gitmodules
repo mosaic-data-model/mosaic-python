@@ -1,0 +1,3 @@
+[submodule "mosaic-specification"]
+	path = mosaic-specification
+	url = https://github.com/mosaic-data-model/mosaic-specification.git
