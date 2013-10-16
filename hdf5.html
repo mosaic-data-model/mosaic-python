@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mosaic in HDF5 files &mdash; Mosaic Python Library 0.9</title>
+    
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mosaic Python Library 0.9" href="index.html" />
+    <link rel="next" title="Mosaic PDB convention" href="pdb_convention.html" />
+    <link rel="prev" title="Mosaic XML files" href="xml.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">Mosaic Python Library 0.9</a></div>
+        <div class="rel">
+          <a href="xml.html" title="Mosaic XML files"
+             accesskey="P">previous</a> |
+          <a href="pdb_convention.html" title="Mosaic PDB convention"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mosaic-in-hdf5-files">
+<span id="index-0"></span><h1>Mosaic in HDF5 files<a class="headerlink" href="#mosaic-in-hdf5-files" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://www.hdfgroup.org/HDF5/">HDF5</a> files contain a tree structure
+whose leaves are datasets. Non-leaf nodes are called groups and work
+much like a directory in a file system. Each dataset is an array whose
+elements can be numbers or characters, but also compound data types
+(similar to record types in various programming languages) or
+fixed-size arrays of numbers or characters. Groups and datasets can
+have metadata tags called attributes. Each group or dataset can be
+identified by a path specifying how to reach it from the root group of
+a file. However, a path is not necessarily unique, because HDF5
+provides links that effectively put a single node in several places in
+the tree. Moreover, HDF5 provides a data type &#8220;reference&#8221; that
+allows to refer to a node or a subset of a dataset.</p>
+<p>The design criteria for the HDF5 representation of Mosaic data were
+efficiency of storage and ease of use from low-level languages such as
+C or Fortran. As much as possible, Mosaic data is stored as arrays of
+numbers.</p>
+<p>HDF5 has two string layouts: fixed-size strings (character arrays) and
+variable-length strings. The two layouts are not interchangeable.
+In order to facilitate software development, Mosaic uses only
+variable-length strings.</p>
+<div class="section" id="mosaic-data-items-in-a-hdf5-file">
+<h2>Mosaic data items in a HDF5 file<a class="headerlink" href="#mosaic-data-items-in-a-hdf5-file" title="Permalink to this headline">¶</a></h2>
+<p>A Mosaic data item in an HDF5 file can be a dataset or a group
+containing multiple datasets. It is identified by four attributes, all
+of which are required:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>DATA_MODEL</dt>
+<dd>a variable-length string with the value &#8220;MOSAIC&#8221;</dd>
+<dt>DATA_MODEL_MAJOR_VERSION</dt>
+<dd>an integer</dd>
+<dt>DATA_MODEL_MINOR_VERSION</dt>
+<dd>an integer</dd>
+<dt>MOSAIC_DATA_TYPE</dt>
+<dd>a variable-length string</dd>
+</dl>
+</div></blockquote>
+<p>References between data items are stored as attributes whose value
+is an HDF5 object reference.</p>
+<div class="section" id="universes">
+<h3>Universes<a class="headerlink" href="#universes" title="Permalink to this headline">¶</a></h3>
+<p>A universe is stored as a group containing several datasets. The
+datasets <a class="reference internal" href="data_model.html#mosaic-universe-convention"><em>convention</em></a> and
+<a class="reference internal" href="data_model.html#mosaic-universe-cell-shape"><em>cell_shape</em></a> are variable-length
+strings. The <a class="reference internal" href="data_model.html#mosaic-universe-symmetry"><em>symmetry transformation</em></a>
+list is stored in dataset <tt class="docutils literal"><span class="pre">symmetry_transformations</span></tt> as a
+one-dimensional array, possibly empty, whose elements are of a
+compound data type with fields</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>rotation</dt>
+<dd>A 3x3 array of float64 numbers.</dd>
+<dt>translation</dt>
+<dd>An array of 3 float64 numbers.</dd>
+</dl>
+</div></blockquote>
+<p>The fragment tree is stored in several arrays. All string values are
+stored in a one-dimensional array dataset <tt class="docutils literal"><span class="pre">symbols</span></tt> whose elements
+are variable-length strings. In the fragment tree, the strings can
+then be replaced by integers, which are indices into this symbol list.
+Ideally, each string is stored only once in the symbol array, though
+this is not a requirement. The tree data structure is stored in two
+integer arrays, <tt class="docutils literal"><span class="pre">fragments</span></tt> and <tt class="docutils literal"><span class="pre">atoms</span></tt>. Each node (fragment or
+atom) has one array entry, which is a compound data type whose fields
+are unsigned integers. Any size of unsigned integer can be used,
+but the same type must be used everywhere for a given universe group.</p>
+<p>The entries of the <tt class="docutils literal"><span class="pre">fragments</span></tt> array have the fields</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parent_index</dt>
+<dd>The index of the parent node in the <tt class="docutils literal"><span class="pre">fragments</span></tt> array.
+A value of 0 indicates a root node, which has no parent.</dd>
+<dt>label_symbol_index</dt>
+<dd>The index of the <a class="reference internal" href="data_model.html#mosaic-fragment-label"><em>label</em></a> in the
+<tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+<dt>species_symbol_index</dt>
+<dd>The index of the <a class="reference internal" href="data_model.html#mosaic-fragment-species"><em>species</em></a> in the
+<tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+<dt>number_of_fragments</dt>
+<dd>The number of sub-fragments. This is redundant information,
+provided to facilitate reading fragment-related information
+without analyzing the whole fragment tree.</dd>
+</dl>
+</div></blockquote>
+<p>The first entry (index 0) of the <tt class="docutils literal"><span class="pre">fragments</span></tt> array is unused,
+in order to allow an index value of 0 to stand for &#8220;no parent&#8221;.
+The <tt class="docutils literal"><span class="pre">fragments</span></tt> array thus has one more entry than the number
+of fragments in the universe.</p>
+<p>The entries of the <tt class="docutils literal"><span class="pre">atoms</span></tt> array have the fields</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>parent_index</dt>
+<dd>The index of the parent node in the <tt class="docutils literal"><span class="pre">fragments</span></tt> array.</dd>
+<dt>label_symbol_index</dt>
+<dd>The index of the <a class="reference internal" href="data_model.html#mosaic-atom-label"><em>label</em></a> in the
+<tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+<dt>type_symbol_index</dt>
+<dd>The index of the <a class="reference internal" href="data_model.html#mosaic-atom-type"><em>type</em></a> in the
+<tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+<dt>name_symbol_index</dt>
+<dd>The index of the <a class="reference internal" href="data_model.html#mosaic-atom-name"><em>name</em></a> in the
+<tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+<dt>number_of_sites</dt>
+<dd>The <a class="reference internal" href="data_model.html#mosaic-atom-nsites"><em>number of sites</em></a>.</dd>
+</dl>
+</div></blockquote>
+<p>The entries of the <tt class="docutils literal"><span class="pre">bonds</span></tt> array have the fields</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>atom_index_1</dt>
+<dd>The index of the first atom in the <tt class="docutils literal"><span class="pre">atoms</span></tt> array.</dd>
+<dt>atom_index_2</dt>
+<dd>The index of the second atom in the <tt class="docutils literal"><span class="pre">atoms</span></tt> array.</dd>
+<dt>bond_order_symbol_index</dt>
+<dd>The index of the bond-order label in the <tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+</dl>
+</div></blockquote>
+<p>The entries of the <tt class="docutils literal"><span class="pre">molecules</span></tt> array have a large number of
+redundant fields (all but the first two) that are provided to allow
+atoms be attributed to molecules without analyzing the full fragment
+tree.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fragment_index</dt>
+<dd>The index of the fragment node in the <tt class="docutils literal"><span class="pre">fragments</span></tt> array.</dd>
+<dt>number_of_copies</dt>
+<dd>The number of copies of the molecule in the universe.</dd>
+<dt>first_atom_index</dt>
+<dd>The index of the first atom in the <tt class="docutils literal"><span class="pre">atoms</span></tt> array.</dd>
+<dt>number_of_atoms</dt>
+<dd>The number of atoms in the molecule.</dd>
+<dt>first_bond_index</dt>
+<dd>The index of the first bond in the <tt class="docutils literal"><span class="pre">bonds</span></tt> array.</dd>
+<dt>number_of_bonds</dt>
+<dd>The number of bonds in the molecule.</dd>
+<dt>first_site_index</dt>
+<dd>The index of the first site of the molecule.</dd>
+<dt>number_of_sites</dt>
+<dd>The number of sites in the molecule.</dd>
+</dl>
+</div></blockquote>
+<p>Since the atoms, sites, and bonds of a molecule have consecutive
+indices, the redundant &#8220;first_index&#8221; and &#8220;number_of&#8221; values are
+sufficient to locate atoms, sites, and bonds for each molecule.
+For many applications this is sufficient, making it unnecessary
+to use the <tt class="docutils literal"><span class="pre">fragments</span></tt> array.</p>
+<p>Finally, the array <tt class="docutils literal"><span class="pre">polymers</span></tt> has one entry for each polymer
+fragment in the universe. Its fields are</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>fragment_index</dt>
+<dd>The index of the fragment node in the <tt class="docutils literal"><span class="pre">fragments</span></tt> array.</dd>
+<dt>polymer_type_symbol_index</dt>
+<dd>The index of the polymer-type label in the <tt class="docutils literal"><span class="pre">symbols</span></tt> array.</dd>
+</dl>
+</div></blockquote>
+<p>If the universe has no polymer fragments, the dataset <tt class="docutils literal"><span class="pre">polymers</span></tt>
+may be omitted.</p>
+</div>
+<div class="section" id="configurations">
+<h3>Configurations<a class="headerlink" href="#configurations" title="Permalink to this headline">¶</a></h3>
+<p>A configuration is stored as a group containing two datasets:
+<tt class="docutils literal"><span class="pre">positions</span></tt> (required) and <tt class="docutils literal"><span class="pre">cell_parameters</span></tt> (required if the
+universe&#8217;s cell shape is not &#8220;infinite&#8221;). The reference to the
+universe is stored in the attribute <tt class="docutils literal"><span class="pre">universe</span></tt> of the group.</p>
+<p>The dataset <tt class="docutils literal"><span class="pre">positions</span></tt> is a one-dimensional array whose length is
+equal to the number of sites in the universe. Its elements are
+one-dimensional arrays of length 3 whose elements are of type
+&#8220;float32&#8221; or &#8220;float64&#8221;.</p>
+<p>The dataset <tt class="docutils literal"><span class="pre">cell_parameters</span></tt> is an array whose elements are of
+type &#8220;float32&#8221; or &#8220;float64&#8221;, and whose shape is defined in the
+<a class="reference internal" href="data_model.html#mosaic-configuration-cp"><em>specification</em></a>.</p>
+</div>
+<div class="section" id="properties">
+<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<p>A property data item is stored as a dataset that is a one-dimensional
+array whose length is equal to the number of atoms or sites in the
+universe or the universe&#8217;s fragment list. Each element of this array
+is an array whose shape and element type is defined by the property&#8217;s
+<a class="reference internal" href="data_model.html#mosaic-property-data"><em>data</em></a>.
+The <a class="reference internal" href="data_model.html#mosaic-property-universe"><em>reference</em></a> to the
+universe is stored in the attribute <tt class="docutils literal"><span class="pre">universe</span></tt> of the group.
+The property&#8217;s <a class="reference internal" href="data_model.html#mosaic-property-name"><em>name</em></a> and
+<a class="reference internal" href="data_model.html#mosaic-property-units"><em>units</em></a> are stored in attributes
+of the same name as variable-length strings.
+The property&#8217;s <a class="reference internal" href="data_model.html#mosaic-property-type"><em>type</em></a> is stored in the
+attribute <tt class="docutils literal"><span class="pre">property_type</span></tt>, also as a variable-length string.</p>
+</div>
+<div class="section" id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Permalink to this headline">¶</a></h3>
+<p>A label data item is stored as a dataset that is a one-dimensional
+array whose length is equal to the number of atoms or sites in the
+universe or the universe&#8217;s fragment list. Each element of this array
+is a variable-length string.
+The <a class="reference internal" href="data_model.html#mosaic-label-universe"><em>reference</em></a> to the
+universe is stored in the attribute <tt class="docutils literal"><span class="pre">universe</span></tt> of the group.
+The label&#8217;s <a class="reference internal" href="data_model.html#mosaic-label-name"><em>name</em></a> is stored in the attribute
+<tt class="docutils literal"><span class="pre">name</span></tt> as a variable-length string.
+The label&#8217;s <a class="reference internal" href="data_model.html#mosaic-label-type"><em>type</em></a> is stored in the
+attribute <tt class="docutils literal"><span class="pre">label_type</span></tt>, also as a variable-length string.</p>
+</div>
+<div class="section" id="selections">
+<h3>Selections<a class="headerlink" href="#selections" title="Permalink to this headline">¶</a></h3>
+<p>A selection is stored as a dataset that is a one-dimensional array
+of integers.
+The <a class="reference internal" href="data_model.html#mosaic-selection-universe"><em>reference</em></a> to the
+universe is stored in the attribute <tt class="docutils literal"><span class="pre">universe</span></tt> of the group.
+The selection&#8217;s <a class="reference internal" href="data_model.html#mosaic-selection-type"><em>type</em></a> is stored in the
+attribute <tt class="docutils literal"><span class="pre">selection_type</span></tt> as a variable-length string.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html">The API common to all models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.immutable_model">The immutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.mutable_model">The mutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.array_model">The array model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.hdf5">HDF5 I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.xml_io">XML I/O</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">The file converter <tt class="docutils literal"><span class="pre">mosaic</span></tt></a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data_model.html">The Mosaic data model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xml.html">Mosaic XML files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mosaic in HDF5 files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdb_convention.html">Mosaic PDB convention</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="xml.html" title="Mosaic XML files"
+             >previous</a> |
+          <a href="pdb_convention.html" title="Mosaic PDB convention"
+             >next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/hdf5.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2013, The Mosaic Community.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

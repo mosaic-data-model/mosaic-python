@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mosaic XML files &mdash; Mosaic Python Library 0.9</title>
+    
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mosaic Python Library 0.9" href="index.html" />
+    <link rel="next" title="Mosaic in HDF5 files" href="hdf5.html" />
+    <link rel="prev" title="The Mosaic data model" href="data_model.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">Mosaic Python Library 0.9</a></div>
+        <div class="rel">
+          <a href="data_model.html" title="The Mosaic data model"
+             accesskey="P">previous</a> |
+          <a href="hdf5.html" title="Mosaic in HDF5 files"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mosaic-xml-files">
+<span id="index-0"></span><h1>Mosaic XML files<a class="headerlink" href="#mosaic-xml-files" title="Permalink to this headline">¶</a></h1>
+<p>The Mosaic XML format is defined by a <a class="reference external" href="http://relaxng.org/">Relax NG</a>
+schema. The following explanations document additional constraints
+that cannot be encoded in a schema.</p>
+<div class="section" id="mosaic-data-items-in-an-xml-file">
+<h2>Mosaic data items in an XML file<a class="headerlink" href="#mosaic-data-items-in-an-xml-file" title="Permalink to this headline">¶</a></h2>
+<p>A Mosaic XML file contains a top-level element with tag <tt class="docutils literal"><span class="pre">mosaic</span></tt>
+whose children are Mosaic data items. Each of these data items has a
+required attribute <tt class="docutils literal"><span class="pre">id</span></tt> that gives it a name through which it can be
+identified uniquely inside the <tt class="docutils literal"><span class="pre">mosaic</span></tt> element. No two data items
+in the same top-level element may have the same <tt class="docutils literal"><span class="pre">id</span></tt> value.</p>
+<p>References to a data item take the form of an empty element with the
+same tag as used for the definition of the data item itself. The
+empty element contains a single attribute <tt class="docutils literal"><span class="pre">ref</span></tt> whose value is the
+unique identifier of the data item that is referenced.</p>
+</div>
+<div class="section" id="floating-point-numbers">
+<h2>Floating-point numbers<a class="headerlink" href="#floating-point-numbers" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="data_model.html#mosaic-configuration"><em>Configurations</em></a> and real-valued
+<a class="reference internal" href="data_model.html#mosaic-property"><em>properties</em></a> contain floating-point data. The
+Mosaic specification allows two floating-point data types, &#8220;float32&#8221;
+and &#8220;float64&#8221;, which are based on IEEE binary floating point
+formats. In XML, numbers are usually stored in decimal form.  Since an
+exact conversion between binary and decimal floating-point numbers is
+not possible, a compromise must be chosen. Since a main reason for
+using XML is its human-readable layout, Mosaic&#8217;s XML format uses a
+standard XML decimal representation, at the cost of non-exact
+conversion from and to binary data layouts.</p>
+<p>Programs writing Mosaic XML files should convert floating point values
+using the largest possible number of digits and then remove trailing
+zeros from the mantissa. They should not attempt any rounding. The
+symbols &#8220;NaN&#8221;, &#8220;+inf&#8221; and &#8220;-inf&#8221; should be used for non-numbers, although
+such values rarely make sense in the context of molecular simulations.</p>
+</div>
+<div class="section" id="array-data">
+<h2>Array data<a class="headerlink" href="#array-data" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="data_model.html#mosaic-property"><em>Property</em></a> data items contain one array value
+per atom or site. The N-dimensional array values in a property are
+stored as a single N+1-dimensional array, whose leading dimension is
+the number of atoms or sites. Likewise, the positions in a
+<a class="reference internal" href="data_model.html#mosaic-configuration"><em>configuration</em></a> data item are stored as an
+array of shape (M, 3), where M is the number of sites.</p>
+<p>The elements of an array are stored as a single list in row-major
+order.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html">The API common to all models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.immutable_model">The immutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.mutable_model">The mutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.array_model">The array model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.hdf5">HDF5 I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.xml_io">XML I/O</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">The file converter <tt class="docutils literal"><span class="pre">mosaic</span></tt></a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data_model.html">The Mosaic data model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mosaic XML files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf5.html">Mosaic in HDF5 files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdb_convention.html">Mosaic PDB convention</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="data_model.html" title="The Mosaic data model"
+             >previous</a> |
+          <a href="hdf5.html" title="Mosaic in HDF5 files"
+             >next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/xml.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2013, The Mosaic Community.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

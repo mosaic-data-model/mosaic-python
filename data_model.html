@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Mosaic data model &mdash; Mosaic Python Library 0.9</title>
+    
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mosaic Python Library 0.9" href="index.html" />
+    <link rel="next" title="Mosaic XML files" href="xml.html" />
+    <link rel="prev" title="The file converter mosaic" href="tools.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">Mosaic Python Library 0.9</a></div>
+        <div class="rel">
+          <a href="tools.html" title="The file converter mosaic"
+             accesskey="P">previous</a> |
+          <a href="xml.html" title="Mosaic XML files"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-mosaic-data-model">
+<h1>The Mosaic data model<a class="headerlink" href="#the-mosaic-data-model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mosaic-data-items">
+<span id="index-0"></span><h2>Mosaic data items<a class="headerlink" href="#mosaic-data-items" title="Permalink to this headline">¶</a></h2>
+<p>Mosaic data items are the smallest units of information that can be
+stored in files. A Mosaic file can contain any number of data items,
+each of which has a unique identifier. Identifiers are text strings
+whose exact specification may vary between file formats. ASCII encoded
+identifiers are allowed in all file formats and are therefore
+preferred.</p>
+<div class="section" id="some-definitions-used-in-the-following">
+<h3>Some definitions used in the following<a class="headerlink" href="#some-definitions-used-in-the-following" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="docutils">
+<dt>int8, int16, int32, int64</dt>
+<dd>A signed integer occupying 8, 16, 32, or 64 bits in memory.</dd>
+<dt>uint8, uint16, uint32, uint64</dt>
+<dd>An unsigned integer occupying 8, 16, 32, or 64 bits in memory.</dd>
+<dt>bool</dt>
+<dd>A truth value that is either True or False.</dd>
+<dt>float32</dt>
+<dd>An IEEE single-precision floating point number, occupying
+32 bits in memory.</dd>
+<dt>float64</dt>
+<dd>An IEEE double-precision floating point number, occupying
+64 bits in memory.</dd>
+<dt>label</dt>
+<dd>A text string in ASCII encoding containing at most 32767
+characters which are each an upper or lower case letter, a
+digit, or one of the punctuation characters in the string
+&#8221;!#$%&amp;?&#64;^_~+-*/=,()[]&#8217;&#8221;.  This includes all
+the ASCII punctuation characters except for the dot. Spaces and
+control characters are not allowed.</dd>
+<dt>list</dt>
+<dd>An ordered collection of items. Corresponding data structures in
+programming languages are typically called list, vector, or
+array.</dd>
+<dt>array</dt>
+<dd>An n-dimensional ordered collection whose elements are of
+identical type.</dd>
+<dt>atom</dt>
+<dd>A point-like particle in a molecular simulation.  May represent
+a real atom, a united-atom particle in a coarse-grained model,
+or a dummy interaction point with no physical properties.</dd>
+<dt>site</dt>
+<dd>A point in space related to an atom. An atom has at least
+one site. Atoms with multiple sites can be used for representing
+quantum models (path integrals, wave functions, ...),
+atoms with multi-modal position distributions (as used in
+crystallography), etc.</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="data-item-type-universe">
+<span id="mosaic-universe"></span><span id="index-1"></span><h2>Data item type &#8220;universe&#8221;<a class="headerlink" href="#data-item-type-universe" title="Permalink to this headline">¶</a></h2>
+<p>The universe is the most central Mosaic data item because all the
+other ones require a reference to a universe, because their data
+contents can only be interpreted meaningfully in the context of their
+universe.</p>
+<p>A universe describes a molecular system, defining</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>the chemical structure of the molecules it contains</li>
+<li>the topology of the whole system (periodic boundary conditions etc.)</li>
+<li>symmetries, if required</li>
+</ol>
+</div></blockquote>
+<p>A Mosaic universe contains:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-universe-cell-shape">
+<li>a cell shape field, whose value is &#8220;infinite&#8221;, &#8220;cube&#8221;,
+&#8220;cuboid&#8221;, or &#8220;parallelepiped&#8221;</li>
+</ul>
+<ul class="simple" id="mosaic-universe-convention">
+<li>a convention field, whose value is an ASCII-encoded text string
+naming a convention for atom names, decomposition of standard
+groups (e.g. amino acid residues) into subgroups and atoms, etc.</li>
+</ul>
+<ul class="simple" id="mosaic-universe-symmetry">
+<li>a (possibly empty) list of symmetry transformation. Each symmetry
+transformation is defined by a rotation matrix and a translation
+vector. The full system consists of the explicitly represented
+atoms and molecules plus their images obtained by applying all the
+symmetry transformations. Symmetry transformations are defined in
+fractional coordinates and therefore allowed only for periodic
+universes.</li>
+</ul>
+<ul class="simple" id="mosaic-universe-molecules">
+<li>a list of molecules, each molecule being defined by a
+(fragment, count) pair, where count is a positive integer.
+Fragments are defined below.</li>
+</ul>
+</div></blockquote>
+<p id="mosaic-fragment">A Mosaic fragment is not a data item, because it cannot be written to
+a file in isolation. Fragments exist only as part of a universe
+definition. A fragment loosely corresponds to the concept of a
+functional group or moiety in chemistry, but its definition covers a
+much wider range of chemical structures: the extreme use cases for
+fragments in Mosaic are single atoms and whole molecules.</p>
+<p>A fragment contains the following information:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-fragment-label">
+<li>a label field, whose value is a label that identifies the
+fragment uniquely inside its parent fragment (if any parent
+fragment exists)</li>
+</ul>
+<ul class="simple" id="mosaic-fragment-species">
+<li>a species field, whose value is a label that describes the
+chemical entity described by the fragment</li>
+</ul>
+<ul class="simple" id="mosaic-fragment-polymer">
+<li>a boolean field is_polymer, whose value is &#8220;true&#8221; if the fragment
+describes a polymer. A polymer fragment has an empty atom list,
+i.e. it contains only sub-fragments.  A polymer fragment also has
+an additional polymer_type field, whose value is &#8220;&#8221;,
+&#8220;polypeptide&#8221;, &#8220;polyribonucleotide&#8221;, &#8220;polydeoxyribonucleotide&#8221;, or
+&#8220;polynucleotide&#8221;. The empty string is used for polymers that are
+not of any other type, or for polymers of unknown type.</li>
+</ul>
+<ul class="simple" id="mosaic-fragment-fragments">
+<li>a (possibly empty) list of sub-fragments</li>
+</ul>
+<ul class="simple" id="mosaic-fragment-atoms">
+<li>a (possibly empty) list of atoms</li>
+</ul>
+<ul class="simple" id="mosaic-fragment-bonds">
+<li>a (possibly empty) list of bonds</li>
+</ul>
+</div></blockquote>
+<p id="mosaic-atom">An atom is described by:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-atom-label">
+<li>a label field, whose value is a label that identifies the
+atom uniquely inside its parent fragment. Each label inside
+a parent fragment can name an atom //or// a sub-fragment,
+but not both.</li>
+</ul>
+<ul class="simple" id="mosaic-atom-type">
+<li>a type field, whose value is &#8220;element&#8221;, &#8220;cgparticle&#8221;, &#8220;dummy&#8221;, or
+&#8220;&#8221;. The empty string is used for any type other then the explicitly
+named ones, and for atoms of unknown type. The type &#8220;element&#8221; refers
+to a physical atom with a well-defined chemical element. The type
+&#8220;cgparticle&#8221; refers to coarse-grained particles that represent several
+physical atoms. The type &#8220;dummy&#8221; refers to interaction sites that
+have no physical reality.</li>
+</ul>
+<ul class="simple" id="mosaic-atom-name">
+<li>a name field, whose value is a label that describes the chemical
+nature of the atom. For atoms of type &#8220;element&#8221;, it must be the
+chemical element symbol, with the first letter upper-case and
+the second letter, if one exists, in lower-case.</li>
+</ul>
+<ul class="simple" id="mosaic-atom-nsites">
+<li>a number of sites field, whose value is a positive integer.</li>
+</ul>
+</div></blockquote>
+<p id="mosaic-bonds">A bond is described by two atom references and a bond order
+specification, whose value is &#8220;&#8221;, &#8220;single&#8221;, &#8220;double&#8221;, &#8220;triple&#8221;,
+&#8220;quadruple&#8221;, or &#8220;aromatic&#8221;.  The empty string is used for bonds of any
+other order, or for bonds of unknown order. Bonds must be defined at
+the level of the smallest possible fragment that includes both atoms
+implied in the bond. In other words, it must be possible to check if
+two atoms in a fragment are linked by a bond without looking at parent
+fragments.</p>
+<p>An atom reference is an ASCII-encoded text string naming an atom
+relative to the current fragment by the sequence of labels that define
+the path to the atom. The labels in the sequence are separated by a
+dot.</p>
+</div>
+<div class="section" id="data-item-type-configuration">
+<span id="mosaic-configuration"></span><span id="index-2"></span><h2>Data item type &#8220;configuration&#8221;<a class="headerlink" href="#data-item-type-configuration" title="Permalink to this headline">¶</a></h2>
+<p>A configuration contains:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-configuration-universe">
+<li>a reference to a universe</li>
+</ul>
+<ul class="simple" id="mosaic-configuration-pos">
+<li>one position vector for each site in the universe</li>
+</ul>
+<ul class="simple" id="mosaic-configuration-cp">
+<li>for universes with a bounded cell, the parameters of the cell,
+stored as an array whose shape is determined by the universe&#8217;s
+cell shape: an empty shape vector (i.e. the array is a scalar)
+for &#8220;cube&#8221;, shape (3) for &#8220;cuboid&#8221;, and (3,3) for &#8220;parallelepiped&#8221;.</li>
+</ul>
+</div></blockquote>
+<p>The elements of the position vectors and the cell parameters are
+floats of the same precision, either float32 or float64.</p>
+</div>
+<div class="section" id="data-item-type-property">
+<span id="mosaic-property"></span><span id="index-3"></span><h2>Data item type &#8220;property&#8221;<a class="headerlink" href="#data-item-type-property" title="Permalink to this headline">¶</a></h2>
+<p>A property contains:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-property-type">
+<li>a type field, whose value is &#8220;atom&#8221;, &#8220;site&#8221;, &#8220;template_atom&#8221;,
+or &#8220;template_site&#8221;</li>
+</ul>
+<ul class="simple" id="mosaic-property-universe">
+<li>a reference to a universe</li>
+</ul>
+<ul id="mosaic-property-data">
+<li><p class="first">one array (see details below) for each</p>
+<blockquote>
+<div><ul class="simple">
+<li>atom in the universe, if the type field is &#8220;atom&#8221;</li>
+<li>site in the universe, if the type field is &#8220;site&#8221;</li>
+<li>atom in the fragment templates, if the type field is &#8220;template_atom&#8221;</li>
+<li>site in the fragment templates, if the type field is &#8220;template_site&#8221;</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<ul class="simple" id="mosaic-property-name">
+<li>a name field, whose value is a label</li>
+</ul>
+<ul class="simple" id="mosaic-property-units">
+<li>a units field, see details below</li>
+</ul>
+</div></blockquote>
+<p>The arrays for each atom or site have identical shapes and their
+elements identical types. The type can be int8, int16, int32, int64,
+uint8, uint16, uint32, uint32, uint64, float32, float64, or bool.</p>
+<p>The value of the units field is a text string in ASCII encoding.  It
+contains a sequence of unit factors separated by a space.  A unit
+factor is either a number (an integer or a decimal fraction) or a unit
+symbol optionally followed by a non-zero integer which indicates the
+power to which this factor is taken.  Examples:</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8220;nm3&#8221; stands for cubic nanometers</li>
+<li>&#8220;nm ps-1&#8221; stands for nanometers per picosecond</li>
+<li>&#8220;60 s&#8221; stands for a minute</li>
+</ul>
+</div></blockquote>
+<p>Each unit symbol may occur only once in the units field. There may also
+be at most one numeric factor, which must be the first one.</p>
+<p>The following unit symbols may be used:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="17%" />
+<col width="47%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td rowspan="6">Length</td>
+<td>pm</td>
+<td>picometer</td>
+</tr>
+<tr class="row-even"><td>Ang</td>
+<td>Ångström</td>
+</tr>
+<tr class="row-odd"><td>nm</td>
+<td>nanometer</td>
+</tr>
+<tr class="row-even"><td>um</td>
+<td>micrometer</td>
+</tr>
+<tr class="row-odd"><td>mm</td>
+<td>millimeter</td>
+</tr>
+<tr class="row-even"><td>m</td>
+<td>meter</td>
+</tr>
+<tr class="row-odd"><td rowspan="6">Time</td>
+<td>fs</td>
+<td>femtosecond</td>
+</tr>
+<tr class="row-even"><td>ps</td>
+<td>picosecond</td>
+</tr>
+<tr class="row-odd"><td>ns</td>
+<td>nanosecond</td>
+</tr>
+<tr class="row-even"><td>us</td>
+<td>microsecond</td>
+</tr>
+<tr class="row-odd"><td>ms</td>
+<td>millisecond</td>
+</tr>
+<tr class="row-even"><td>s</td>
+<td>second</td>
+</tr>
+<tr class="row-odd"><td rowspan="3">Mass</td>
+<td>amu</td>
+<td>gram/mole</td>
+</tr>
+<tr class="row-even"><td>g</td>
+<td>gram</td>
+</tr>
+<tr class="row-odd"><td>kg</td>
+<td>kilogram</td>
+</tr>
+<tr class="row-even"><td>Quantity</td>
+<td>mol</td>
+<td>mole</td>
+</tr>
+<tr class="row-odd"><td rowspan="5">Energy</td>
+<td>J</td>
+<td>joule</td>
+</tr>
+<tr class="row-even"><td>kJ</td>
+<td>kilojoule</td>
+</tr>
+<tr class="row-odd"><td>cal</td>
+<td>calorie</td>
+</tr>
+<tr class="row-even"><td>kcal</td>
+<td>kilocalorie</td>
+</tr>
+<tr class="row-odd"><td>eV</td>
+<td>electron-volt</td>
+</tr>
+<tr class="row-even"><td>Temperature</td>
+<td>K</td>
+<td>Kelvin</td>
+</tr>
+<tr class="row-odd"><td rowspan="7">Pressure</td>
+<td>Pa</td>
+<td>pascal</td>
+</tr>
+<tr class="row-even"><td>kPa</td>
+<td>kilopascal</td>
+</tr>
+<tr class="row-odd"><td>MPa</td>
+<td>megapascal</td>
+</tr>
+<tr class="row-even"><td>GPa</td>
+<td>giggapascal</td>
+</tr>
+<tr class="row-odd"><td>atm</td>
+<td>atmosphere</td>
+</tr>
+<tr class="row-even"><td>bar</td>
+<td>bar</td>
+</tr>
+<tr class="row-odd"><td>kbar</td>
+<td>kilobar</td>
+</tr>
+<tr class="row-even"><td rowspan="4">Electrical
+units</td>
+<td>e</td>
+<td>proton charge</td>
+</tr>
+<tr class="row-odd"><td>C</td>
+<td>coulomb</td>
+</tr>
+<tr class="row-even"><td>A</td>
+<td>ampere</td>
+</tr>
+<tr class="row-odd"><td>V</td>
+<td>volt</td>
+</tr>
+<tr class="row-even"><td rowspan="2">Angles</td>
+<td>rad</td>
+<td>radian</td>
+</tr>
+<tr class="row-odd"><td>deg</td>
+<td>degree</td>
+</tr>
+<tr class="row-even"><td rowspan="4">Constants</td>
+<td>c</td>
+<td>speed of light</td>
+</tr>
+<tr class="row-odd"><td>h</td>
+<td>Planck constant</td>
+</tr>
+<tr class="row-even"><td>Nav</td>
+<td>Avogadro number</td>
+</tr>
+<tr class="row-odd"><td>me</td>
+<td>electron mass</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="data-item-type-label">
+<span id="mosaic-label"></span><span id="index-4"></span><h2>Data item type &#8220;label&#8221;<a class="headerlink" href="#data-item-type-label" title="Permalink to this headline">¶</a></h2>
+<p>A label contains:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-label-type">
+<li>a type field, whose value is &#8220;atom&#8221;, &#8220;site&#8221;, &#8220;template_atom&#8221;,
+or &#8220;template_site&#8221;</li>
+</ul>
+<ul class="simple" id="mosaic-label-universe">
+<li>a reference to a universe</li>
+</ul>
+<ul id="mosaic-label-strings">
+<li><p class="first">one text string in ASCII encoding for each</p>
+<blockquote>
+<div><ul class="simple">
+<li>atom in the universe, if the type field is &#8220;atom&#8221;</li>
+<li>site in the universe, if the type field is &#8220;site&#8221;</li>
+<li>atom in the fragment templates, if the type field is &#8220;template_atom&#8221;</li>
+<li>site in the fragment templates, if the type field is &#8220;template_site&#8221;</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<ul class="simple" id="mosaic-label-name">
+<li>a name field, whose value is a label</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="data-item-type-selection">
+<span id="mosaic-selection"></span><span id="index-5"></span><h2>Data item type &#8220;selection&#8221;<a class="headerlink" href="#data-item-type-selection" title="Permalink to this headline">¶</a></h2>
+<p>A selection contains:</p>
+<blockquote>
+<div><ul class="simple" id="mosaic-selection-type">
+<li>a type field, whose value is &#8220;atom&#8221;, &#8220;site&#8221;, &#8220;template_atom&#8221;,
+or &#8220;template_site&#8221;</li>
+</ul>
+<ul class="simple" id="mosaic-selection-universe">
+<li>a reference to a universe</li>
+</ul>
+<ul class="simple" id="mosaic-selection-indices">
+<li>an array whose values are the indices of the atoms
+or sites that are part of the selection.</li>
+</ul>
+</div></blockquote>
+<p>The index array is one-dimensional and the type of its elements is one
+of the unsigned integer types: uint8, uint16, uint32, uint32, uint64.
+The indices are stored in monotonously increasing order with no index
+being listed more than once.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html">The API common to all models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.immutable_model">The immutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.mutable_model">The mutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.array_model">The array model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.hdf5">HDF5 I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_api.html#module-mosaic.xml_io">XML I/O</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">The file converter <tt class="docutils literal"><span class="pre">mosaic</span></tt></a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">The Mosaic data model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xml.html">Mosaic XML files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf5.html">Mosaic in HDF5 files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdb_convention.html">Mosaic PDB convention</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="tools.html" title="The file converter mosaic"
+             >previous</a> |
+          <a href="xml.html" title="Mosaic XML files"
+             >next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/data_model.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2013, The Mosaic Community.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,1236 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The API common to all models &mdash; Mosaic Python Library 0.9</title>
+    
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Mosaic Python Library 0.9" href="index.html" />
+    <link rel="next" title="The file converter mosaic" href="tools.html" />
+    <link rel="prev" title="Mosaic Python Library" href="index.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">Mosaic Python Library 0.9</a></div>
+        <div class="rel">
+          <a href="index.html" title="Mosaic Python Library"
+             accesskey="P">previous</a> |
+          <a href="tools.html" title="The file converter mosaic"
+             accesskey="N">next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-mosaic.api">
+<span id="the-api-common-to-all-models"></span><h1>The API common to all models<a class="headerlink" href="#module-mosaic.api" title="Permalink to this headline">¶</a></h1>
+<p>The Mosaic Python API</p>
+<p>This module provides abstract base classes that define the Mosaic
+Python API and implement validation code. They also provide a few
+convenience functions implemented in terms of the raw API.</p>
+<p>Concrete implementations subclass the abstract base classes and
+implement all the abstract properties.</p>
+<dl class="class">
+<dt id="mosaic.api.MosaicAtom">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicAtom</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atom inside a <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a></p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-atom"><em>data model documentation</em></a> for atoms.</p>
+<dl class="method">
+<dt id="mosaic.api.MosaicAtom.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicAtom.label">
+<tt class="descname">label</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string not containing dots and identifying
+the atom uniquely inside its parent fragment.
+See the <a class="reference internal" href="data_model.html#mosaic-atom-label"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicAtom.name">
+<tt class="descname">name</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string describing the type of the atom. For &#8216;real&#8217;
+atoms in the chemical sense, this must be the chemical element
+symbol.
+See the <a class="reference internal" href="data_model.html#mosaic-atom-name"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicAtom.number_of_atoms">
+<tt class="descname">number_of_atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.number_of_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.number_of_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of atoms associated with the atom (always 1)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicAtom.number_of_sites">
+<tt class="descname">number_of_sites</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.number_of_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.number_of_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of sites associated with the atom.
+See the <a class="reference internal" href="data_model.html#mosaic-atom-nsites"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicAtom.type">
+<tt class="descname">type</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the type of the atom.
+See the <a class="reference internal" href="data_model.html#mosaic-atom-type"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicAtom.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicAtom.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicAtom.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicAtom.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicConfiguration">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicConfiguration</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration</p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-configuration"><em>data model documentation</em></a>
+for configurations.</p>
+<dl class="attribute">
+<dt id="mosaic.api.MosaicConfiguration.cell_parameters">
+<tt class="descname">cell_parameters</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.cell_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.cell_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing the parameters defining the shape and size
+of the cell.
+See the <a class="reference internal" href="data_model.html#mosaic-configuration-cp"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicConfiguration.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicConfiguration.lattice_vectors">
+<tt class="descname">lattice_vectors</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.lattice_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.lattice_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a sequence of arrays of shape (3,) containing the lattice
+vectors for the simulation cell.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicConfiguration.positions">
+<tt class="descname">positions</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.positions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing an (x, y, z) position for each site.
+See the <a class="reference internal" href="data_model.html#mosaic-configuration-pos"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicConfiguration.universe">
+<tt class="descname">universe</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a> for which the property is defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicConfiguration.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicConfiguration.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicConfiguration.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicConfiguration.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicDataItem">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicDataItem</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicDataItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicDataItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for top-level data items</p>
+<p>Instances of subclasses of MosaicDataItem can be stored in files.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicFragment">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicFragment</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fragment inside a <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a></p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-fragment"><em>data model documentation</em></a> for fragments.</p>
+<p>Fragments implement the Mapping interface. Valid keys are strings
+identifying atoms or sub-fragments, using dots to separate subsequent
+labels. For polymer fragments, integer keys are valid as well to refer
+to a specific sub-fragment in the chain.</p>
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.atom_to_site_index_mapping">
+<tt class="descname">atom_to_site_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.atom_to_site_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.atom_to_site_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the site index
+corresponding to the first site of the atom with
+atom index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.atoms">
+<tt class="descname">atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence of atoms, may be empty.
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-atoms"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.bonds">
+<tt class="descname">bonds</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence of bonds, may be empty. Each bond is
+repreented by a tuple (atom_ref_1, atom_ref_2, bond_order).
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-bonds"><em>data model documentation</em></a>
+and the <a class="reference internal" href="data_model.html#mosaic-bonds"><em>bond reference documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.fragments">
+<tt class="descname">fragments</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.fragments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence of sub-fragments, may be empty.
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-fragments"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.is_polymer">
+<tt class="descname">is_polymer</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.is_polymer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.is_polymer" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the fragment is a polymer.
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-polymer"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.label">
+<tt class="descname">label</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string not containing dots and identifying
+the fragment uniquely inside its parent fragment.
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-label"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.number_of_atoms">
+<tt class="descname">number_of_atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.number_of_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.number_of_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of atoms in the fragment (including the atoms
+in sub-fragments).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.number_of_bonds">
+<tt class="descname">number_of_bonds</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.number_of_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.number_of_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of bonds associated with the fragment,
+including the bonds inside sub-fragments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.number_of_sites">
+<tt class="descname">number_of_sites</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.number_of_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.number_of_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of sites associated with the fragment, i.e.
+the sum of the numbers of sites of all the fragment&#8217;s atoms,
+including those of sub-fragments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.polymer_type">
+<tt class="descname">polymer_type</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.polymer_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.polymer_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>String identifying the polymer type if is_polymer is true.
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-polymer"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.recursive_atom_iterator">
+<tt class="descname">recursive_atom_iterator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.recursive_atom_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.recursive_atom_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over the atoms in the fragment, including the
+atoms in sub-fragments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.recursive_atom_path_iterator">
+<tt class="descname">recursive_atom_path_iterator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.recursive_atom_path_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.recursive_atom_path_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over the atom paths in the fragment, including the
+atoms in sub-fragments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.recursive_bond_iterator">
+<tt class="descname">recursive_bond_iterator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.recursive_bond_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.recursive_bond_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over the bonds in the fragment, including the
+bonds in sub-fragments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.site_to_atom_index_mapping">
+<tt class="descname">site_to_atom_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.site_to_atom_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.site_to_atom_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the atom index
+corresponding to site index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicFragment.species">
+<tt class="descname">species</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.species"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.species" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string describing the species of the fragment
+(e.g. what kind of molecule or moiety it represents).
+See the <a class="reference internal" href="data_model.html#mosaic-fragment-species"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicFragment.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicFragment.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicFragment.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicLabel">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicLabel</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Label</p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-label"><em>data model documentation</em></a> for labels.</p>
+<dl class="method">
+<dt id="mosaic.api.MosaicLabel.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicLabel.name">
+<tt class="descname">name</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string describing the label.
+See the <a class="reference internal" href="data_model.html#mosaic-label-name"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicLabel.strings">
+<tt class="descname">strings</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sequence of strings representing a label for each atom or site.
+See the <a class="reference internal" href="data_model.html#mosaic-label-strings"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicLabel.type">
+<tt class="descname">type</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the type of the label.
+See the <a class="reference internal" href="data_model.html#mosaic-label-type"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicLabel.universe">
+<tt class="descname">universe</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a> for which the property is defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicLabel.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicLabel.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicLabel.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicLabel.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicProperty">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicProperty</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property</p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-property"><em>data model documentation</em></a> for properties.</p>
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.data">
+<tt class="descname">data</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing the property&#8217;s values.
+See the <a class="reference internal" href="data_model.html#mosaic-property-data"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.element_shape">
+<tt class="descname">element_shape</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.element_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.element_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shape of the sub-array containing the propery for one
+atom or site.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicProperty.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.name">
+<tt class="descname">name</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string describing the property.
+See the <a class="reference internal" href="data_model.html#mosaic-property-name"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.type">
+<tt class="descname">type</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the type of the property.
+See the <a class="reference internal" href="data_model.html#mosaic-property-type"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.units">
+<tt class="descname">units</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the physical units of the property.
+See the <a class="reference internal" href="data_model.html#mosaic-property-units"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicProperty.universe">
+<tt class="descname">universe</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a> for which the property is defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicProperty.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicProperty.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicProperty.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicProperty.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicSelection">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicSelection</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selection</p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-selection"><em>data model documentation</em></a> for selections.</p>
+<dl class="attribute">
+<dt id="mosaic.api.MosaicSelection.indices">
+<tt class="descname">indices</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>An array containing the indices of the contained atoms or sites.
+See the <a class="reference internal" href="data_model.html#mosaic-selection-indices"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicSelection.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicSelection.number_of_atoms">
+<tt class="descname">number_of_atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.number_of_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.number_of_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of atoms in the selection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicSelection.number_of_sites">
+<tt class="descname">number_of_sites</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.number_of_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.number_of_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of sites in the selection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicSelection.type">
+<tt class="descname">type</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the type of the selection.
+See the <a class="reference internal" href="data_model.html#mosaic-selection-type"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicSelection.universe">
+<tt class="descname">universe</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#mosaic.api.MosaicUniverse" title="mosaic.api.MosaicUniverse"><tt class="xref py py-class docutils literal"><span class="pre">MosaicUniverse</span></tt></a> for which the selection is defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicSelection.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicSelection.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicSelection.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicSelection.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.api.MosaicUniverse">
+<em class="property">class </em><tt class="descclassname">mosaic.api.</tt><tt class="descname">MosaicUniverse</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Universe</p>
+<p>See the <a class="reference internal" href="data_model.html#mosaic-universe"><em>data model documentation</em></a> for universes.</p>
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.atom_to_site_index_mapping">
+<tt class="descname">atom_to_site_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.atom_to_site_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.atom_to_site_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the site index
+corresponding to the first site of the atom with
+atom index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.atom_to_template_index_mapping">
+<tt class="descname">atom_to_template_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.atom_to_template_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.atom_to_template_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the template atom index
+corresponding to atom index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.bond_index_array">
+<tt class="descname">bond_index_array</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.bond_index_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.bond_index_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an integer array of shape (N, 2), where N
+is the total number of bonds in the universe. The entries
+[i, 0] and [i, 1] refer to the two atoms that are connected
+by bond i. The entry [i, 0] is smaller than the entry [i, 1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the bond index array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.cell_parameter_array_shape">
+<tt class="descname">cell_parameter_array_shape</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.cell_parameter_array_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.cell_parameter_array_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>The shape of a valid cell_parameters array
+in a <a class="reference internal" href="#mosaic.api.MosaicConfiguration" title="mosaic.api.MosaicConfiguration"><tt class="xref py py-class docutils literal"><span class="pre">MosaicConfiguration</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.cell_shape">
+<tt class="descname">cell_shape</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.cell_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.cell_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string identifying the cell shape.
+See the <a class="reference internal" href="data_model.html#mosaic-universe-cell-shape"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.convention">
+<tt class="descname">convention</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.convention"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.convention" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ASCII string naming the conventions used inside the
+definitions of fragements and atoms.
+See the <a class="reference internal" href="data_model.html#mosaic-universe-convention"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if other is equivalent to self</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.molecules">
+<tt class="descname">molecules</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.molecules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.molecules" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sequence of molecule specifications. Each element is a
+two-element tuple, whose first element is a <a class="reference internal" href="#mosaic.api.MosaicFragment" title="mosaic.api.MosaicFragment"><tt class="xref py py-class docutils literal"><span class="pre">MosaicFragment</span></tt></a>
+and whose second element is an integer specifying the number of
+copies of the molecule.
+See the <a class="reference internal" href="data_model.html#mosaic-universe-molecules"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_atoms">
+<tt class="descname">number_of_atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of atoms in the universe.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_bonds">
+<tt class="descname">number_of_bonds</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of bonds in the universe.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_molecules">
+<tt class="descname">number_of_molecules</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_molecules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_molecules" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of molecules in the universe.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_sites">
+<tt class="descname">number_of_sites</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of sites in the universe.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_template_atoms">
+<tt class="descname">number_of_template_atoms</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_template_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_template_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of template atoms in the universe, i.e. the
+total number of atoms in all fragment definitions. It is
+equal to the number of atoms iff all molecule repetition
+counts are 1.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.number_of_template_sites">
+<tt class="descname">number_of_template_sites</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.number_of_template_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.number_of_template_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of template sites in the universe, i.e. the
+total number of sites in all fragment definitions. It is
+equal to the number of sites iff all molecule repetition
+counts are 1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.recursive_atom_iterator">
+<tt class="descname">recursive_atom_iterator</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.recursive_atom_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.recursive_atom_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over the atoms in the universe.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.site_to_atom_index_mapping">
+<tt class="descname">site_to_atom_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.site_to_atom_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.site_to_atom_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the atom index
+corresponding to site index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.site_to_template_index_mapping">
+<tt class="descname">site_to_template_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.site_to_template_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.site_to_template_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the template site index
+corresponding to site index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mosaic.api.MosaicUniverse.symmetry_transformations">
+<tt class="descname">symmetry_transformations</tt><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.symmetry_transformations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.symmetry_transformations" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sequence of symmetry transformations, possibly empty.
+Each symmetry tranformation is defined by a two-element tuple,
+whose first item is a rotation matrix and whose second item
+is a translation vector.
+See the <a class="reference internal" href="data_model.html#mosaic-universe-symmetry"><em>data model documentation</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.template_site_to_template_atom_index_mapping">
+<tt class="descname">template_site_to_template_atom_index_mapping</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.template_site_to_template_atom_index_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.template_site_to_template_atom_index_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array whose element [s] is the template atom index
+corresponding to template site index s.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the object satisfies the constraints of the
+Mosaic data model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">if the object is not valid Mosaic data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.api.MosaicUniverse.validate_equivalence">
+<tt class="descname">validate_equivalence</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/mosaic/api.html#MosaicUniverse.validate_equivalence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.api.MosaicUniverse.validate_equivalence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the equivalence of Python objects representing
+Mosaic data. The two objects can belong to different models;
+only the common API functionality is used for the test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; an arbitrary Python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if other is not equivalent to self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mosaic.immutable_model">
+<span id="the-immutable-model"></span><h1>The immutable model<a class="headerlink" href="#module-mosaic.immutable_model" title="Permalink to this headline">¶</a></h1>
+<p>Immutable model</p>
+<p>This experimental module implements the Mosaic API in terms of
+immutable data structures as implemented in ImmutablePy.  The use of
+immutable data structures avoids many nasty bugs, such as modifying a
+universe after creating a configuration object that refer to it,
+invalidating the configuration. However, the immutable data structures
+from ImmutablePy are not very efficient at the moment.</p>
+</div>
+<div class="section" id="module-mosaic.mutable_model">
+<span id="the-mutable-model"></span><h1>The mutable model<a class="headerlink" href="#module-mosaic.mutable_model" title="Permalink to this headline">¶</a></h1>
+<p>Mutable model</p>
+<p>This is the main in-memory representation of Mosaic data.  Like most
+Python code, it uses mutable data structures, which are efficient but
+can become inconsistent if not used carefully.</p>
+</div>
+<div class="section" id="module-mosaic.array_model">
+<span id="the-array-model"></span><h1>The array model<a class="headerlink" href="#module-mosaic.array_model" title="Permalink to this headline">¶</a></h1>
+<p>Array model</p>
+<p>An array model stores all data in NumPy arrays, in particular the tree
+structure defining the fragments in universes. The array model is an
+in-memory version of the HDF5 storage layout. It is used for HDF5 I/O,
+but can also be of use for interfacing with C or Fortran code.</p>
+</div>
+<div class="section" id="module-mosaic.hdf5">
+<span id="hdf5-i-o"></span><h1>HDF5 I/O<a class="headerlink" href="#module-mosaic.hdf5" title="Permalink to this headline">¶</a></h1>
+<p>HDF5 I/O</p>
+<p>Any model implementing the Mosaic API can be written to a HDF5 file,
+but will be implicitly converted to a <a class="reference internal" href="#module-mosaic.array_model" title="mosaic.array_model"><tt class="xref py py-mod docutils literal"><span class="pre">mosaic.array_model</span></tt></a>
+representation.  Data items read from a HDF5 file are always
+represented by an <a class="reference internal" href="#module-mosaic.array_model" title="mosaic.array_model"><tt class="xref py py-mod docutils literal"><span class="pre">mosaic.array_model</span></tt></a>.</p>
+<p>The HDF5 storage layout is designed for clarity rather than
+simplicity, the files should be as self-documenting as possible.</p>
+<p>A common pattern for generating an HDF5 file is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">HDF5Store</span><span class="p">(</span><span class="s">&#39;molecule.h5&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;universe&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="p">)</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;configuration1&quot;</span><span class="p">,</span> <span class="n">configuration1</span><span class="p">)</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;configuration2&quot;</span><span class="p">,</span> <span class="n">configuration2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A common pattern for reading from an HDF5 file is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">HDF5Store</span><span class="p">(</span><span class="s">&#39;molecule.h5&#39;</span><span class="p">):</span>
+   <span class="n">items</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="mosaic.hdf5.HDF5Store">
+<em class="property">class </em><tt class="descclassname">mosaic.hdf5.</tt><tt class="descname">HDF5Store</tt><big>(</big><em>hdf5_group_or_filename</em>, <em>file_mode=None</em><big>)</big><a class="reference internal" href="_modules/mosaic/hdf5.html#HDF5Store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.hdf5.HDF5Store" title="Permalink to this definition">¶</a></dt>
+<dd><p>I/O handler for HDF5 files</p>
+<p>This class handles the translation of references between Mosaic
+data items in memory and HDF5 object references in a file. When
+writing data, references are allowed only to data items that have
+been written earlier using the same HDF5Store instance.</p>
+<p>An HDF5Store can be used like a file, in which case it must be
+closed after the last <tt class="docutils literal"><span class="pre">store</span></tt> or <tt class="docutils literal"><span class="pre">retrieve</span></tt> operation, or as a
+context manager in a with-statement. For reading, it also behaves
+like an iterator yielding <tt class="docutils literal"><span class="pre">(name,</span> <span class="pre">data_item)</span></tt> pairs.</p>
+<dl class="method">
+<dt id="mosaic.hdf5.HDF5Store.retrieve">
+<tt class="descname">retrieve</tt><big>(</big><em>path_or_node</em><big>)</big><a class="reference internal" href="_modules/mosaic/hdf5.html#HDF5Store.retrieve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.hdf5.HDF5Store.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path_or_node</strong> (<em>str or h5py.Node</em>) &#8211; a HDF5 path, relative to the group used by
+the HDF5Store, or an HDF5 node</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a Mosaic data item</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#mosaic.api.MosaicDataItem" title="mosaic.api.MosaicDataItem"><tt class="xref py py-class docutils literal"><span class="pre">mosaic.api.MosaicDataItem</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mosaic.hdf5.HDF5Store.store">
+<tt class="descname">store</tt><big>(</big><em>path</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/mosaic/hdf5.html#HDF5Store.store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.hdf5.HDF5Store.store" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; a HDF5 path, relative to the group used by the HDF5Store</li>
+<li><strong>data</strong> (<a class="reference internal" href="#mosaic.api.MosaicDataItem" title="mosaic.api.MosaicDataItem"><tt class="xref py py-class docutils literal"><span class="pre">mosaic.api.MosaicDataItem</span></tt></a>) &#8211; a Mosaic data item</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mosaic.xml_io">
+<span id="xml-i-o"></span><h1>XML I/O<a class="headerlink" href="#module-mosaic.xml_io" title="Permalink to this headline">¶</a></h1>
+<p>XML I/O</p>
+<p>The XML representation of Mosaic data consists of a single element
+<tt class="docutils literal"><span class="pre">&lt;mosaic</span> <span class="pre">version=&quot;x.y&quot;&gt;...&lt;/mosaic&gt;</span></tt> that can contain any number of
+Mosaic data items, each of which is identified by a unique id.
+The classes <a class="reference internal" href="#mosaic.xml_io.XMLWriter" title="mosaic.xml_io.XMLWriter"><tt class="xref py py-class docutils literal"><span class="pre">XMLWriter</span></tt></a> and <a class="reference internal" href="#mosaic.xml_io.XMLReader" title="mosaic.xml_io.XMLReader"><tt class="xref py py-class docutils literal"><span class="pre">XMLReader</span></tt></a> handle the
+translation between Mosaic data items in memory that can reference
+each other and XML elements that reference each other by id.</p>
+<p>A common pattern for generating an XML file is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">XMLWriter</span><span class="p">(</span><span class="s">&#39;molecule.xml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;universe&quot;</span><span class="p">,</span> <span class="n">universe</span><span class="p">)</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;configuration1&quot;</span><span class="p">,</span> <span class="n">configuration1</span><span class="p">)</span>
+   <span class="n">writer</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="s">&quot;configuration2&quot;</span><span class="p">,</span> <span class="n">configuration2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A common pattern for reading from an XML file is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">XMLReader</span><span class="p">(</span><span class="s">&#39;molecule.xml&#39;</span><span class="p">):</span>
+   <span class="n">items</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="mosaic.xml_io.XMLReader">
+<em class="property">class </em><tt class="descclassname">mosaic.xml_io.</tt><tt class="descname">XMLReader</tt><big>(</big><em>xml_file</em><big>)</big><a class="reference internal" href="_modules/mosaic/xml_io.html#XMLReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.xml_io.XMLReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input handler for XML files</p>
+<p>This class handles the translation of references by id in an XML
+file to in-memory references between data items.</p>
+<p>An XMLReader is used as an iterator over <tt class="docutils literal"><span class="pre">(id,</span> <span class="pre">data_item)</span></tt> pairs.</p>
+<p>The current implementation does not do any validation, it assumes
+the XML input to be correct.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mosaic.xml_io.XMLWriter">
+<em class="property">class </em><tt class="descclassname">mosaic.xml_io.</tt><tt class="descname">XMLWriter</tt><big>(</big><em>xml_file</em><big>)</big><a class="reference internal" href="_modules/mosaic/xml_io.html#XMLWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.xml_io.XMLWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output handler for XML files</p>
+<p>This class handles the translation of references between Mosaic
+data items in memory to XML references by id. References are
+allowed only to data items that have been written earlier using
+the same XMLWriter instance.</p>
+<p>An XMLWriter can be used like a file, in which case it must be
+closed after the last <tt class="docutils literal"><span class="pre">store</span></tt> operation, or as a context manager
+in a with-statement.</p>
+<dl class="method">
+<dt id="mosaic.xml_io.XMLWriter.store">
+<tt class="descname">store</tt><big>(</big><em>xml_id</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/mosaic/xml_io.html#XMLWriter.store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mosaic.xml_io.XMLWriter.store" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xml_id</strong> (<em>str</em>) &#8211; the id of the XML element representing the data item</li>
+<li><strong>data</strong> (<a class="reference internal" href="#mosaic.api.MosaicDataItem" title="mosaic.api.MosaicDataItem"><tt class="xref py py-class docutils literal"><span class="pre">mosaic.api.MosaicDataItem</span></tt></a>) &#8211; a Mosaic data item</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">The API common to all models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mosaic.immutable_model">The immutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mosaic.mutable_model">The mutable model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mosaic.array_model">The array model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mosaic.hdf5">HDF5 I/O</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-mosaic.xml_io">XML I/O</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">The file converter <tt class="docutils literal"><span class="pre">mosaic</span></tt></a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="data_model.html">The Mosaic data model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xml.html">Mosaic XML files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hdf5.html">Mosaic in HDF5 files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdb_convention.html">Mosaic PDB convention</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="index.html" title="Mosaic Python Library"
+             >previous</a> |
+          <a href="tools.html" title="The file converter mosaic"
+             >next</a> |
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/python_api.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2013, The Mosaic Community.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>
