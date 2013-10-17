@@ -371,18 +371,20 @@ The following unit symbols may be used:
    +             +------+-----------------+
    |             | V    | volt            |
    +-------------+------+-----------------+
-   | Angles      | rad  | radian          |
-   +             +------+-----------------+
-   |             | deg  | degree          |
+   | Angles      | deg  | degree          |
    +-------------+------+-----------------+
    | Constants   | c    | speed of light  |
    +             +------+-----------------+
    |             | h    | Planck constant |
    +             +------+-----------------+
-   |             | Nav  | Avogadro number |
-   +             +------+-----------------+
    |             | me   | electron mass   |
    +-------------+------+-----------------+
+
+Note that the only unit for angles is the degree. Contrary to SI
+recommendations, angles are taken to be dimensionless in Mosaic.  This
+corresponds to how angles are treated *de facto* in computational
+science. The unit "deg" is thus a dimensionless conversion factor
+equal to 180/π.
 
 
 .. index::

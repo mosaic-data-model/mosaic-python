@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.9.0',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -409,22 +409,16 @@ units</td>
 <tr class="row-odd"><td>V</td>
 <td>volt</td>
 </tr>
-<tr class="row-even"><td rowspan="2">Angles</td>
-<td>rad</td>
-<td>radian</td>
-</tr>
-<tr class="row-odd"><td>deg</td>
+<tr class="row-even"><td>Angles</td>
+<td>deg</td>
 <td>degree</td>
 </tr>
-<tr class="row-even"><td rowspan="4">Constants</td>
+<tr class="row-odd"><td rowspan="3">Constants</td>
 <td>c</td>
 <td>speed of light</td>
 </tr>
-<tr class="row-odd"><td>h</td>
+<tr class="row-even"><td>h</td>
 <td>Planck constant</td>
-</tr>
-<tr class="row-even"><td>Nav</td>
-<td>Avogadro number</td>
 </tr>
 <tr class="row-odd"><td>me</td>
 <td>electron mass</td>
@@ -432,6 +426,11 @@ units</td>
 </tbody>
 </table>
 </div></blockquote>
+<p>Note that the only unit for angles is the degree. Contrary to SI
+recommendations, angles are taken to be dimensionless in Mosaic.  This
+corresponds to how angles are treated <em>de facto</em> in computational
+science. The unit &#8220;deg&#8221; is thus a dimensionless conversion factor
+equal to 180/π.</p>
 </div>
 <div class="section" id="data-item-type-label">
 <span id="mosaic-label"></span><span id="index-4"></span><h2>Data item type &#8220;label&#8221;<a class="headerlink" href="#data-item-type-label" title="Permalink to this headline">¶</a></h2>
