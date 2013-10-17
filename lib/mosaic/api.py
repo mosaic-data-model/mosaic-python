@@ -1477,8 +1477,8 @@ _allowed_units = \
      "K",    
      "Pa",   "kPa",  "MPa",  "GPa",  "atm",  "bar",  "kbar", 
      "e",    "C",    "A",    "V",    
-     "rad",  "deg",  
-     "c",    "h",    "Nav",  "me"]
+     "rad",  
+     "c",    "h",    "me"]
 
 # Validation as a test function rather than raising exceptions
 
