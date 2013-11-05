@@ -25,6 +25,7 @@ import itertools as IT
 import re
 
 import numpy as N
+import numpy.linalg as LA
 
 import mosaic.utility
 
@@ -1155,6 +1156,18 @@ class MosaicConfiguration(MosaicDataItem):
                                      N.array([0., p[1], 0.], dtype=p.dtype),
                                      N.array([0., 0., p[2]], dtype=p.dtype)),
                 'parallelepiped': lambda p: tuple(N.array(v) for v in p),
+                }[self.universe.cell_shape](self.cell_parameters)
+
+    def cell_volume(self):
+        """
+        :returns: the volume the simulation cell, or None for
+                  infinite universes
+        :rtype: float
+        """
+        return {'infinite': lambda p: None,
+                'cube': lambda p: float(p*p*p),
+                'cuboid': lambda p: p[0]*p[1]*p[2],
+                'parallelepiped': lambda p: abs(LA.det(p)),
                 }[self.universe.cell_shape](self.cell_parameters)
 
     # Equivalence test

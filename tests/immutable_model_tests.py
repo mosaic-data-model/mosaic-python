@@ -471,6 +471,7 @@ class PBCTest(unittest.TestCase):
                                IN.zeros((0, 3), N.float32),
                                None)
         self.assertEqual(conf.lattice_vectors(), ())
+        self.assertEqual(conf.cell_volume(), None)
         conf = M.Configuration(self.cube,
                                IN.zeros((0, 3), N.float32),
                                IN.array(1., N.float32))
@@ -478,6 +479,7 @@ class PBCTest(unittest.TestCase):
         self.assertTrue((lv[0] == N.array([1., 0., 0.], N.float32)).all())
         self.assertTrue((lv[1] == N.array([0., 1., 0.], N.float32)).all())
         self.assertTrue((lv[2] == N.array([0., 0., 1.], N.float32)).all())
+        self.assertEqual(conf.cell_volume(), 1.)
         conf = M.Configuration(self.cuboid,
                                IN.zeros((0, 3), N.float32),
                                IN.array([1., 2., 4.], N.float32))
@@ -485,6 +487,7 @@ class PBCTest(unittest.TestCase):
         self.assertTrue((lv[0] == N.array([1., 0., 0.], N.float32)).all())
         self.assertTrue((lv[1] == N.array([0., 2., 0.], N.float32)).all())
         self.assertTrue((lv[2] == N.array([0., 0., 4.], N.float32)).all())
+        self.assertEqual(conf.cell_volume(), 8.)
         conf = M.Configuration(self.parallelepiped,
                                IN.zeros((0, 3), N.float32),
                                IN.array([[1., 2., 4.],
@@ -494,9 +497,7 @@ class PBCTest(unittest.TestCase):
         self.assertTrue((lv[0] == N.array([1., 2., 4.], N.float32)).all())
         self.assertTrue((lv[1] == N.array([8., 4., 2.], N.float32)).all())
         self.assertTrue((lv[2] == N.array([16., 4., 8.], N.float32)).all())
-
-
-PBCTest('test_lattice_vectors').debug()
+        self.assertAlmostEqual(conf.cell_volume(), 168.)
 
 def suite():
     loader = unittest.TestLoader()
