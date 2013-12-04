@@ -35,7 +35,7 @@ import mosaic.utility
 # versions. An increase in the major number indicated an incompatibility
 # with preceding versions.
 
-MOSAIC_VERSION = (0, 9)
+MOSAIC_VERSION = (1, 0)
 
 
 # Base class for all classes that represent top-level data items,
