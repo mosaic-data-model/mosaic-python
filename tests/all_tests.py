@@ -17,6 +17,7 @@ import immutable_model_tests
 import equivalence_tests
 import hdf5_tests
 import xml_tests
+import pdb_tests
 
 def suite():
     test_suite = unittest.TestSuite()
@@ -26,6 +27,7 @@ def suite():
     test_suite.addTests(equivalence_tests.suite())
     test_suite.addTests(hdf5_tests.suite())
     test_suite.addTests(xml_tests.suite())
+    test_suite.addTests(pdb_tests.suite())
     return test_suite
 
 if __name__ == '__main__':
