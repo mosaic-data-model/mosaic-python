@@ -665,10 +665,10 @@ class MosaicUniverse(MosaicDataItem):
                                 repr(other.convention)))
         for (r1, t1), (r2, t2) in zip(self.symmetry_transformations,
                                       other.symmetry_transformations):
-            if r1 != r2:
+            if (r1 != r2).any():
                 raise ValueError("rotation matrices differ: %s != %s"
                                  % (str(r1), str(r2)))
-            if t1 != t2:
+            if (t1 != t2).any():
                 raise ValueError("translation vectors differ: %s != %s"
                                  % (str(t1), str(t2)))
         for (sf, sc), (of, oc) in zip(self.molecules, other.molecules):
