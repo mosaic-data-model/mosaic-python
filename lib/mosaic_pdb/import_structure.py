@@ -35,11 +35,13 @@ from mosaic_pdb.mmcif import MMCIFParser
 
 from mosaic_pdb.space_groups import space_groups
 
-from pdb_chem_comp import components, variants
+from mosaic_pdb.pdb_chem_comp import components, variants
 from mosaic.mutable_model import \
         Element, Atom, Fragment, Polymer, Universe, \
         Configuration, SiteProperty
 from mosaic import api
+
+from mosaic.utility import isstring
 
 # Unit conversion factors
 
@@ -97,7 +99,7 @@ class MMCIFStructure(object):
             parser = MMCIFParser(pdb_code=self.pdb_code)
         elif structure_file is not None:
             self.pdb_code = None
-            if isinstance(structure_file, basestring):
+            if isstring(structure_file):
                 structure_file = open(structure_file)
             self.structure_file = structure_file
             parser = MMCIFParser(file_object=self.structure_file)
@@ -374,7 +376,6 @@ def make_monomer(sites, site_properties):
                 label_parts.append(comp_id + '_' + str(i+1))
                 fragments.append(f)
                 unique_ids.extend(u)
-                print u
             bonds = ()  # !!! TODO
             return Fragment('+'.join(label_parts), '+'.join(comp_ids),
                             fragments, (), bonds), \
@@ -604,7 +605,7 @@ def make_crystal(structure, model_number, universes):
                                      'in sequence' % seq_id)
                 residues[seq_id] = f
                 unique_ids[asym_id].extend(u)
-            residues = residues.values()
+            residues = list(residues.values())
             # Add inter-monomer links
             if polymer_type in ['polypeptide(L)']:
                 peptide_bonds = tuple((r1.get('C'), r2.get('N'), 'single')

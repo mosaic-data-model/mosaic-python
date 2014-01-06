@@ -23379,7 +23379,7 @@ space_groups['P 21 2 21'] = space_groups['P 21 21 2']
 
 # Make it possible to use space group symbols without spaces, which occur
 # in several PDB entries.
-for k, sg in space_groups.items():
+for k, sg in list(space_groups.items()):
     if not isinstance(k, int):
         compacted = ''.join(k.split())
         if compacted not in space_groups:
@@ -23390,3 +23390,4 @@ del rot
 del trans_num
 del trans_den
 del sg
+del N

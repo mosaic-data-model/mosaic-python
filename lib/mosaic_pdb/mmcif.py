@@ -30,7 +30,6 @@ access that the application requires.
 # data is stored, and directly in the form that the application will use.
 
 import re
-import cStringIO
 import gzip
 import os
 import urllib
@@ -128,7 +127,7 @@ class MMCIFParser(object):
         """
         file_iter = iter(self.file_object)
         while True:
-            line = file_iter.next()
+            line = next(file_iter)
             self.line_number += 1
 
             ## skip comments
@@ -139,7 +138,7 @@ class MMCIFParser(object):
             if line.startswith(";"):
                 lmerge = [line[1:]]
                 while True:
-                    line = file_iter.next()
+                    line = next(file_iter)
                     self.line_number += 1
                     if line.startswith(";"):
                         break
@@ -178,14 +177,14 @@ class MMCIFParser(object):
         """
         iterator = self.parseLowLevel()
         while True:
-            item_type, item = iterator.next()
+            item_type, item = next(iterator)
             if item_type is KEYWORD and item[0] == "data":
                 yield item_type, item
                 break
 
         state = LABEL_OR_KEYWORD
         while True:
-            item_type, item = iterator.next()
+            item_type, item = next(iterator)
 
             if state is LABEL_OR_KEYWORD:
                 if item_type is DATA_LABEL:

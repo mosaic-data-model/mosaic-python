@@ -26,12 +26,23 @@ then regenerated automatically on the next run.
 #  the file LICENSE.txt, distributed as part of this software.
 #-----------------------------------------------------------------------------
 
-import cPickle
 import gzip
 import os
-import StringIO
 import sys
-import urllib2
+
+# Python 2/3 compatibility issues
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+    from urllib2 import urlopen
+    import cPickle as pickle
+    bytes2text = lambda x: x
+else:
+    from io import BytesIO as StringIO
+    from urllib.request import urlopen
+    import pickle
+    from io import TextIOWrapper
+    def bytes2text(stream):
+        return TextIOWrapper(stream, encoding="utf8")
 
 from mosaic_pdb import mmcif
 
@@ -50,8 +61,12 @@ if not os.path.exists(MOSAIC_DIR):
 # These big files are downloaded once and converted to a pickle
 # file stored in PDB_CHEM_COMP_DICT that is loaded much faster.
 
-PDB_CHEM_COMP_DICT = os.path.join(MOSAIC_DIR,
-                                  'pdb_chemical_components_dictionary.pickle')
+if sys.version_info[0] == 2:
+    PDB_CHEM_COMP_DICT = os.path.join(MOSAIC_DIR,
+                                      'pdb_chemical_components_dictionary.pickle')
+else:
+    PDB_CHEM_COMP_DICT = os.path.join(MOSAIC_DIR,
+                                      'pdb_chemical_components_dictionary_py3.pickle')
 
 chem_comp_urls = ['ftp://ftp.wwpdb.org/pub/pdb/data/monomers/'
                   'components.cif.gz',
@@ -150,8 +165,8 @@ except IOError:
     variants = {}
 
     for url in chem_comp_urls:
-        buffer = StringIO.StringIO(urllib2.urlopen(url).read())
-        f = gzip.GzipFile(fileobj=buffer)
+        buffer = StringIO(urlopen(url).read())
+        f = bytes2text(gzip.GzipFile(fileobj=buffer))
         parser = mmcif.MMCIFParser(file_object=f)
         for item_type, item in parser.parse():
             if item_type is mmcif.KEYWORD:
@@ -199,7 +214,6 @@ except IOError:
                                  % str(item_type),
                                  parser.line_number)
 
-    import cPickle
-    f = file(PDB_CHEM_COMP_DICT, 'wb')
-    cPickle.dump((components, variants), f, protocol=2)
+    f = open(PDB_CHEM_COMP_DICT, 'wb')
+    pickle.dump((components, variants), f, protocol=-1)
     f.close()
