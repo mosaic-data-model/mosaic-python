@@ -138,14 +138,14 @@ class PeptideTest(unittest.TestCase):
                 node = mol
                 for p in a.split('.'):
                     node = node[p]
-                self.assert_(isinstance(node, M.Atom))
+                self.assertTrue(isinstance(node, M.Atom))
         paths = tuple(mol_ref.recursive_atom_path_iterator())
         self.assertEqual(len(paths), mol.number_of_atoms)
         for ap in paths:
             node = mol
             for p in ap.split('.'):
                 node = node[p]
-            self.assert_(isinstance(node, M.Atom))
+            self.assertTrue(isinstance(node, M.Atom))
 
 class ErrorCheckingTest(unittest.TestCase):
 

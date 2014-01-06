@@ -510,7 +510,7 @@ class XMLReader(XMLStore):
         data = IN.array([dtype(s) for s in text.split()])
         if isstring(el_shape):
             el_shape = tuple(int(s) for s in el_shape.split())
-        n_els = N.product(el_shape)
+        n_els = N.product(el_shape, dtype=N.int)
         assert len(data) % n_els == 0
         n_entries = len(data) // n_els
         return data.reshape((n_entries,)+el_shape)
