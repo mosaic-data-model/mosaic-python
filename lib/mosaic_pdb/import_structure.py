@@ -128,6 +128,8 @@ class MMCIFStructure(object):
                               atom_site=self.addSite,
                               atom_sites_alt=self.recordAltLabel,
                               atom_site_anisotrop=self.addAnisoU)
+        if self.structure_file is not None:
+            self.structure_file.close()
         if 'entry_id' in self.experiment:
             if self.pdb_code is None:
                 self.pdb_code = self.experiment['entry_id']

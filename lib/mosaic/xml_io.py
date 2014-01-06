@@ -365,6 +365,9 @@ class XMLReader(XMLStore):
         self._id_map = None
         self._data_map = None
 
+    def __del__(self):
+        self.close()
+
     def __iter__(self):
         for event, el in ET.iterparse(self.file):
             if el.tag == 'mosaic':

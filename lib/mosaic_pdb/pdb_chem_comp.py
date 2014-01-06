@@ -128,7 +128,8 @@ def float_item(s):
 
 try:
 
-    components, variants = cPickle.load(file(PDB_CHEM_COMP_DICT))
+    with open(PDB_CHEM_COMP_DICT, 'rb') as pickled_dict:
+        components, variants = pickle.load(pickled_dict)
 
 except IOError:
 
