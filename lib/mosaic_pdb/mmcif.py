@@ -32,9 +32,19 @@ access that the application requires.
 import re
 import gzip
 import os
-import urllib
+import sys
 
 import numpy as np
+
+# Python 2/3 compatibility issues
+if sys.version_info[0] == 2:
+    from urllib import urlretrieve
+    bytes2text = lambda x: x
+else:
+    from urllib.request import urlretrieve
+    from io import TextIOWrapper
+    def bytes2text(stream):
+        return TextIOWrapper(stream, encoding="utf8")
 
 # Identifiers used in the return values of the parsers.
 TOKEN = 'token'
@@ -451,16 +461,16 @@ class PDBFileCollection(object):
             if self.url_pattern is None:
                 raise IOError("No URL pattern for PDB repository")
             url = self.url_pattern % pdb_code
-            filename, headers = urllib.urlretrieve(url)
-            if filename[-2:] == 'gz':
-                return gzip.GzipFile(filename)
+            filename, headers = urlretrieve(url)
+            if url.endswith('.gz'):
+                return bytes2text(gzip.GzipFile(filename))
             else:
-                return file(filename)
+                return open(filename)
         filename = self.getFilename(pdb_code)
-        if filename[-2:] == 'gz':
-            return gzip.GzipFile(filename)
+        if filename.endswith('.gz'):
+            return bytes2text(gzip.GzipFile(filename))
         else:
-            return file(filename)
+            return open(filename)
 
     def __iter__(self):
         """
