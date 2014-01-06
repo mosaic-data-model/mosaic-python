@@ -361,6 +361,7 @@ class XMLReader(XMLStore):
             self.file.close()
         # No more reading after this
         self.file = None
+        self._close_file = False
         # Clear cache
         self._id_map = None
         self._data_map = None

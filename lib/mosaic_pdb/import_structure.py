@@ -96,6 +96,7 @@ class MMCIFStructure(object):
         if pdb_code is not None:
             self.pdb_code = pdb_code
             assert structure_file is None
+            self.structure_file = None
             parser = MMCIFParser(pdb_code=self.pdb_code)
         elif structure_file is not None:
             self.pdb_code = None
