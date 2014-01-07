@@ -67,8 +67,13 @@ except ImportError:
 with open('README.txt') as file:
     long_description = file.read()
 
+class Dummy:
+    pass
+version = Dummy()
+exec(open('lib/mosaic/version.py').read(), version.__dict__)
+
 setup(name='pyMosaic',
-      version='0.9',
+      version=version.version,
       description='MOlecular SimulAtion Interchange Conventions',
       long_description=long_description,
       author='Konrad Hinsen',
