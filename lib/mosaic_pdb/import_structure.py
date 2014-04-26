@@ -77,7 +77,8 @@ class UnitCell(object):
 
 class MMCIFStructure(object):
 
-    def __init__(self, structure_file=None, pdb_code=None):
+    def __init__(self, structure_file=None, pdb_code=None,
+                 with_auth_spec=False):
         """
         Specify the data to be loaded. The following combinations
         are valid:
@@ -92,6 +93,10 @@ class MMCIFStructure(object):
         @type structure_file: C{str}
         @param pdb_code: a four-letter PDB code
         @type pdb_code: C{str}
+        @param with_auth_spec: flag for reading and storing the
+                               author's alternative atom site
+                               specifications
+        @type with_auth_spec: C{bool}
         """
         if pdb_code is not None:
             self.pdb_code = pdb_code
@@ -117,6 +122,10 @@ class MMCIFStructure(object):
         self.extra_bonds = []
         self.models = []
         self.u = {}
+        if with_auth_spec:
+            self.auth_spec = {}
+        else:
+            self.auth_spec = None
         self.modified = False
         parser.parseToObjects(cell=self.cell_parameters,
                               symmetry=self.symmetry,
@@ -315,6 +324,16 @@ class MMCIFStructure(object):
             u_iso = float(b) * Units.Ang ** 2 / (8. * np.pi ** 2)
         monomer.append((unique_id, atom_id, alt_id, comp_id, seq_id, ins_code,
                         atom_type, x, y, z, occupancy, u_iso))
+
+        if self.auth_spec is not None:
+            auth_asym_id = self.getField('auth_asym_id', indices, data)
+            auth_atom_id = self.getField('auth_atom_id', indices, data)
+            auth_comp_id = self.getField('auth_comp_id', indices, data)
+            auth_seq_id = self.getField('auth_seq_id', indices, data)
+            self.auth_spec[unique_id] =  dict(asym_id = auth_asym_id,
+                                              atom_id = auth_atom_id,
+                                              comp_id = auth_comp_id,
+                                              seq_id  = int(auth_seq_id))
 
         stop = False
         for field in ['adp_type', 'aniso_B[1][1]', 'aniso_U[1][1]']:
