@@ -153,7 +153,13 @@ class MMCIFStructure(object):
                    self.cell_parameters['length_a'] == '1'
                    and self.cell_parameters['angle_alpha'] ==
                        self.cell_parameters['angle_beta'] ==
-                       self.cell_parameters['angle_gamma'] == '90'):
+                       self.cell_parameters['angle_gamma'] == '90') \
+               or (self.cell_parameters['length_a'] ==
+                   self.cell_parameters['length_b'] ==
+                   self.cell_parameters['length_a'] == '?'
+                   and self.cell_parameters['angle_alpha'] ==
+                       self.cell_parameters['angle_beta'] ==
+                       self.cell_parameters['angle_gamma'] == '?'):
             # NMR or other non-crystal structure
             self.cell = None
         else:
