@@ -228,10 +228,19 @@ class MMCIFStructure(object):
         self.entities[entity_id]['sequence'] = seq
         res_number = int(data[indices['num']])
         res_type = data[indices['mon_id']]
-        if seq and res_number - seq[-1][0] != 1:
-            raise ValueError("non-consecutive residue numbers "
-                             "in entity_poly_seq")
-        seq.append((res_number, res_type))
+        if self.getYesNoField('hetero', indices, data):
+            if seq and res_number == seq[-1][0]:
+                # Consecutive monomer at the same position as the
+                # preceding one.
+                seq[-1] = (res_number, seq[-1][1] + (res_type,))
+            else:
+                # First monomer at this position.
+                seq.append((res_number, (res_type,)))
+        else:
+            if seq and res_number - seq[-1][0] != 1:
+                raise ValueError("non-consecutive residue numbers %d-%d"
+                                 "in entity_poly_seq" % (res_number, seq[-1][0]))
+            seq.append((res_number, res_type))
 
     def addMolecule(self, indices, data):
         data = dict((label, data[index])
@@ -389,25 +398,21 @@ def partition_sites(sites):
 def make_monomer(sites, site_properties):
     comp_ids = [s[3] for s in sites]
     if len(set(comp_ids)) > 1:
-        raise ValueError("Can't handle monomer made of multiple components: %s"
-                         % str(set(comp_ids)))
-        if False:
-            fragments = []
-            unique_ids = []
-            comp_ids = []
-            label_parts = []
-            for i, (comp_id, group) in enumerate(partition_sites(sites)):
-                f, u = make_monomer(group, site_properties)
-                comp_ids.append(comp_id)
-                label_parts.append(comp_id + '_' + str(i+1))
-                fragments.append(f)
-                unique_ids.extend(u)
-            bonds = ()  # !!! TODO
-            return Fragment('+'.join(label_parts), '+'.join(comp_ids),
-                            fragments, (), bonds), \
-                   unique_ids       
+        # Make a heterogeneous monomer
+        ms = [_make_monomer(comp_id, list(comp_sites), site_properties)
+              for comp_id, comp_sites in it.groupby(sites, lambda s: s[3])]
+        fs = [f for f, u in ms]
+        us = [u for f, u in ms]
+        species = '/'.join(f.label.split('_')[0] for f in fs)
+        seq_id = fs[0].label.split('_')[1]
+        return Fragment(species+'_'+seq_id, species, fs, (), ()), sum(us, ())
+    else:
+        # Make a standard monomer
+        return _make_monomer(comp_ids[0], sites, site_properties)
+
+def _make_monomer(comp_id, sites, site_properties):
     atom_ids = set(s[1] for s in sites)
-    comp = components[comp_ids[0]]
+    comp = components[comp_id]
     comp_atom_ids = set(comp.atoms['atom_id'])
     if hasattr(comp, 'bonds'):
         bond_orders = {'sing': 'single',
@@ -432,12 +437,12 @@ def make_monomer(sites, site_properties):
         else:
             # Variants exist only for amino acids. Find those that match
             # the atom_ids in the current monomer.
-            vs = [v for v in variants.get(comp_ids[0], [])
+            vs = [v for v in variants.get(comp_id, [])
                   if set(components[v].atoms['atom_id']).issuperset(atom_ids)]
             if not vs:
                 missing = atom_ids.difference(comp_atom_ids)
                 raise ValueError("Atom(s) %s not in component %s"
-                                 % (', '.join(missing), comp_ids[0]))
+                                 % (', '.join(missing), comp_id))
             variant = None
             if len(vs) == 1:
                 variant = vs[0]
@@ -572,6 +577,25 @@ def symmetry_transformations(space_group):
         transformations.append((rot, tr))
     return transformations
 
+def chain_links(residues, atom1, atom2, bond_order):
+    def link_atoms(residue, atom):
+        if residue.atoms:
+            # standard monomer
+            atom_ref = residue.get(atom)
+            if atom_ref is None:
+                return []
+            else:
+                return [atom_ref]
+        else:
+            # heterogeneous monomer
+            fs = residue.fragments
+            return [f[atom] for f in fs if atom in f]
+    bonds = []
+    for r1, r2 in zip(residues[:-1], residues[1:]):
+        for a1 in link_atoms(r1, atom1):
+            for a2 in link_atoms(r2, atom2):
+                bonds.append((a1, a2, bond_order))
+    return tuple(bonds)
 
 def make_crystal(structure, model_number, universes):
     """
@@ -612,7 +636,12 @@ def make_crystal(structure, model_number, universes):
             # Start with empty residues
             residues = OrderedDict()
             for seq_id, comp_id in entity['sequence']:
-                f = Fragment(comp_id + '_' + str(seq_id), comp_id,
+                if isinstance(comp_id, tuple):
+                    # heterogeneous monomer
+                    species = '/'.join(comp_id)
+                else:
+                    species = comp_id
+                f = Fragment(species + '_' + str(seq_id), species,
                              (), (), ())
                 residues[seq_id] = f
                 monomer_fragments[(asym_id, seq_id)] = f
@@ -634,9 +663,7 @@ def make_crystal(structure, model_number, universes):
             residues = list(residues.values())
             # Add inter-monomer links
             if polymer_type in ['polypeptide(L)']:
-                peptide_bonds = tuple((r1.get('C'), r2.get('N'), 'single')
-                                      for r1, r2 in zip(residues[:-1],
-                                                        residues[1:]))
+                peptide_bonds = chain_links(residues, 'C', 'N', 'single')
                 ss_bonds = tuple((monomer_fragments[(asym_id, seq1)].get('SG'),
                                   monomer_fragments[(asym_id, seq2)].get('SG'),
                                   'single')
@@ -648,8 +675,7 @@ def make_crystal(structure, model_number, universes):
                                   'polydeoxyribonucleotide',
                                   'polydeoxyribonucleotide/'
                                       'polyribonucleotide hybrid']:
-                bonds = tuple((r1.get('O3\''), r2.get('P'), 'single')
-                              for r1, r2 in zip(residues[:-1], residues[1:]))
+                bonds = chain_links(residues, 'O3\'', 'P', 'single')
             elif polymer_type in ['polysaccharide(D)', 'polysaccharide(L)']:
                 # need to figure out how monosaccharides are linked
                 # example: 1AGA
