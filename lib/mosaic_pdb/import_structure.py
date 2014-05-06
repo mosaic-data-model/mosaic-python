@@ -466,6 +466,31 @@ def _make_monomer(comp_id, sites, site_properties):
                             if sum(d == 0 for d in diff) == 1:
                                 variant = vs[diff.index(0)]
             if variant is None:
+                # Don't consider variants with additional heavy atoms
+                # if there are variants that differ only in protons
+                no_extra_heavy = []
+                for v in vs:
+                    extra = set([e[1] for e in components[v].atoms.entries
+                                 if e[0] not in atom_ids])
+                    if not extra.difference(set(['H'])):
+                        no_extra_heavy.append(v)
+                if no_extra_heavy:
+                    vs = no_extra_heavy
+                if len(vs) == 1:
+                    variant = vs[0]
+            if variant is None:
+                # In case of variants of variants, retain the simplest one
+                remove = []
+                for i in range(len(vs)):
+                    for j in range(len(vs)):
+                        if j != i and vs[j].startswith(vs[i]):
+                            remove.append(j)
+                remove.sort(reverse=True)
+                for i in remove:
+                    del vs[i]
+                if len(vs) == 1:
+                    variant = vs[0]
+            if variant is None:
                 raise ValueError("Monomer variant not unique: %s" % str(vs))
             comp = components[variant]
             comp_atom_ids = set(comp.atoms['atom_id'])
