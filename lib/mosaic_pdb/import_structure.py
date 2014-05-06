@@ -256,13 +256,20 @@ class MMCIFStructure(object):
 
     def addConnection(self, indices, data):
         if self.getField('conn_type_id', indices, data) == 'disulf':
-            asym1, comp1, seq1, asym2, comp2, seq2 = \
+            asym1, comp1, seq1, sym1, asym2, comp2, seq2, sym2 = \
                    [self.getField(f, indices, data)
                     for f in ['ptnr1_label_asym_id', 'ptnr1_label_comp_id',
-                              'ptnr1_label_seq_id', 'ptnr2_label_asym_id',
-                              'ptnr2_label_comp_id', 'ptnr2_label_seq_id']]
-            self.ss_bridges.append(((asym1, comp1, int(seq1)),
-                                    (asym2, comp2, int(seq2))))
+                              'ptnr1_label_seq_id',  'ptnr1_symmetry',
+                              'ptnr2_label_asym_id', 'ptnr2_label_comp_id',
+                              'ptnr2_label_seq_id',  'ptnr2_symmetry']]
+            if sym1.split('_')[0] == 1 and sym2.split('_')[0] == 1:
+                self.ss_bridges.append(((asym1, comp1, int(seq1)),
+                                        (asym2, comp2, int(seq2))))
+            else:
+                # For now, we ignore disulfide bonds between symmetry-related
+                # chains. The only way to handle this in MOSAIC would be
+                # to generate symmetry equivalents explicitly.
+                pass
         elif self.getField('conn_type_id', indices, data) == 'covale':
             asym1, comp1, seq1, atom1, asym2, comp2, seq2, atom2 = \
                    [self.getField(f, indices, data)
