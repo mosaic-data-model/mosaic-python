@@ -26,6 +26,7 @@ from collections import OrderedDict
 import copy
 import itertools as it
 import os
+import re
 import sys
 import traceback
 
@@ -37,7 +38,7 @@ from mosaic_pdb.space_groups import space_groups
 
 from mosaic_pdb.pdb_chem_comp import components, variants
 from mosaic.mutable_model import \
-        Element, Atom, Fragment, Polymer, Universe, \
+        Element, Unknown, Atom, Fragment, Polymer, Universe, \
         Configuration, SiteProperty
 from mosaic import api
 
@@ -517,7 +518,7 @@ def _make_monomer(comp_id, sites, site_properties):
         atom_sites[atom_id] = atom_sites.get(atom_id, [])
         atom_sites[atom_id].append(unique_id)
         site_properties[unique_id] = (x, y, z, occupancy, u_iso)
-    atoms = tuple(Atom(atom_id, Element(atom_type.capitalize()),
+    atoms = tuple(Atom(atom_id, _make_atom_descriptor(atom_type),
                        len(atom_sites[atom_id]))
                   for atom_id, atom_type in zip(atom_ids, atom_types))
     unique_ids = tuple(sum((atom_sites[atom_id] for atom_id in atom_ids), []))
@@ -529,6 +530,19 @@ def _make_monomer(comp_id, sites, site_properties):
         #    label = label + '_' + ins_code
     return Fragment(label, comp.id, (), atoms, bonds), unique_ids
 
+def _make_atom_descriptor(pdb_atom_type):
+    try:
+        # most atom_type values are chemical elements
+        return Element(pdb_atom_type.capitalize())
+    except ValueError:
+        match = re.match('([A-Z][A-Za-z]?)[0-9]*[+-]', pdb_atom_type)
+        if match:
+            # Ions with a charge indication - use the base element name
+            try:
+                return Element(match.group(1))
+            except ValueError:
+                pass
+        return Unknown(pdb_atom_type)
 
 def ss_bridges(structure, asym_id_1, asym_id_2):
     """
