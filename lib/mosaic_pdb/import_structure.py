@@ -435,6 +435,7 @@ def _make_monomer(comp_id, sites, site_properties):
                          and x['atom_id_2'] in atom_ids)
     else:
         bonds = ()
+    species = None
     if not comp_atom_ids.issuperset(atom_ids):
         if atom_ids.difference(comp_atom_ids) == set(["HO5'"]) \
            and "O5'" in atom_ids:
@@ -500,9 +501,23 @@ def _make_monomer(comp_id, sites, site_properties):
                 if len(vs) == 1:
                     variant = vs[0]
             if variant is None:
-                raise ValueError("Monomer variant not unique: %s" % str(vs))
+                # If we get here, there are multiple variants that
+                # describe supersets of the sites we have. There is
+                # not enough information to choose between them,
+                # so we just pick an arbitrary one as a source
+                # for bonds etc. The underlying assumption is that
+                # the bond structures for the given subset of atoms
+                # is the same in all variants.
+                # The fragment label is comp.three_letter_code, which
+                # is the same for all variants anyway. For the
+                # fragment species, we use the generic three-letter
+                # code as well for the case of a non-unique variant.
+                variant = vs[0]
+                species = components[variant].three_letter_code
             comp = components[variant]
             comp_atom_ids = set(comp.atoms['atom_id'])
+    if species is None:
+        species = comp.id
     atom_sites = {}
     atom_ids = []
     atom_types = []
@@ -527,9 +542,7 @@ def _make_monomer(comp_id, sites, site_properties):
         label = comp.three_letter_code
     else:
         label = comp.three_letter_code + '_' + str(seq_id)
-        #if ins_code is not None:
-        #    label = label + '_' + ins_code
-    return Fragment(label, comp.id, (), atoms, bonds), unique_ids
+    return Fragment(label, species, (), atoms, bonds), unique_ids
 
 def _make_atom_descriptor(pdb_atom_type):
     try:
