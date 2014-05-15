@@ -50,6 +50,17 @@ class Units:
     Ang = 0.1
     deg = np.pi / 180.
 
+# Bond order translation
+
+def bond_order(pdb_value_order):
+    if pdb_value_order is None:
+        return ''
+    else:
+        return {'sing': 'single',
+                'doub': 'double',
+                'trip': 'triple',
+                'quad': 'qudruple',
+                'arom': 'aromatic'}[pdb_value_order.lower()]
 
 # Crystallographic unit cell
 
@@ -272,14 +283,16 @@ class MMCIFStructure(object):
                 # to generate symmetry equivalents explicitly.
                 pass
         elif self.getField('conn_type_id', indices, data) == 'covale':
-            asym1, comp1, seq1, atom1, asym2, comp2, seq2, atom2 = \
+            asym1, comp1, seq1, atom1, asym2, comp2, seq2, atom2, value_order = \
                    [self.getField(f, indices, data)
                     for f in ['ptnr1_label_asym_id', 'ptnr1_label_comp_id',
                               'ptnr1_label_seq_id', 'ptnr1_label_atom_id',
                               'ptnr2_label_asym_id', 'ptnr2_label_comp_id',
-                              'ptnr2_label_seq_id', 'ptnr2_label_atom_id']]
+                              'ptnr2_label_seq_id', 'ptnr2_label_atom_id',
+                              'pdbx_value_order']]
             self.extra_bonds.append(((asym1, comp1, seq1, atom1),
-                                     (asym2, comp2, seq2, atom2)))
+                                     (asym2, comp2, seq2, atom2),
+                                     value_order))
 
     def recordAltLabel(self, indices, data):
         data = dict((label, data[index])
@@ -418,18 +431,34 @@ def make_monomer(sites, site_properties):
         # Make a standard monomer
         return _make_monomer(comp_ids[0], sites, site_properties)
 
+def make_untyped_polymer(asym_id, sites, site_properties, extra_bonds):
+    comp_ids = [s[3] for s in sites]
+    if len(set(comp_ids)) > 1:
+        # More than one comp_id, but no separate seq_ids. Make individual
+        # monomers and assemble them into a fragment. Check for covalent
+        # bonds between the monomers.
+        ms = [_make_monomer(comp_id, list(comp_sites), site_properties)
+              for comp_id, comp_sites in it.groupby(sites, lambda s: s[3])]
+        fs = [f for f, u in ms]
+        us = [u for f, u in ms]
+        bonds = [("%s.%s" % (a1[1], a1[3]),
+                  "%s.%s" % (a2[1], a2[3]),
+                  bond_order(value_order))
+                 for a1, a2, value_order in extra_bonds
+                 if a1[0] == asym_id and a2[0] == asym_id]
+        species = '-'.join(f.label.split('_')[0] for f in fs)
+        return Fragment(species, species, fs, (), bonds), sum(us, ())
+    else:
+        # Make a monomer
+        return _make_monomer(comp_ids[0], sites, site_properties)
+
 def _make_monomer(comp_id, sites, site_properties):
     atom_ids = set(s[1] for s in sites)
     comp = components[comp_id]
     comp_atom_ids = set(comp.atoms['atom_id'])
     if hasattr(comp, 'bonds'):
-        bond_orders = {'sing': 'single',
-                       'doub': 'double',
-                       'trip': 'triple',
-                       'quad': 'qudruple',
-                       'arom': 'aromatic'}
         bonds = tuple((x['atom_id_1'], x['atom_id_2'],
-                       bond_orders.get(x['value_order'].lower(), ''))
+                       bond_order(x.get('value_order')))
                       for x in comp.bonds
                       if x['atom_id_1'] in atom_ids
                          and x['atom_id_2'] in atom_ids)
@@ -675,12 +704,6 @@ def make_crystal(structure, model_number, universes):
         entity = structure.entities[entity_id]
         entity_type = entity['type']
         if entity_type == 'polymer' and 'polymer_type' in entity:
-            # Sugars are classified as polymers in the PDB, but have
-            # no polymer type and a single residue with the
-            # non-numeric seq_id '.'. This looks like a bug in the PDB
-            # data, but since it's so frequent, we have to deal with
-            # it. We do so by treating polymers without a polymer_type
-            # as non-polymers.
             polymer_type = entity['polymer_type']
             if entity['polymer_nstd_linkage']:
                 raise ValueError("Non-standard linkage not yet implemented")
@@ -756,6 +779,17 @@ def make_crystal(structure, model_number, universes):
             molecules[asym_id] = [Polymer(asym_id, name, residues, bonds,
                                           polymer_types.get(polymer_type,
                                                             polymer_type))]
+
+        elif entity_type == 'polymer' and 'polymer_type' not in entity:
+            # This is how sugars are described in the PDB, though
+            # this seems to be undocumented. Sugars are labelled as
+            # polymers, but have no polymer_type. They have one or
+            # two monomers but all atoms have '.' in the seq_id field.
+            f, u = make_untyped_polymer(asym_id, sites, site_properties,
+                                        structure.extra_bonds)
+            molecules[asym_id] = [f]
+            unique_ids[asym_id].extend(u)
+
         elif entity_type == 'water':
             ms = []
             for atom in sites:
@@ -769,6 +803,7 @@ def make_crystal(structure, model_number, universes):
                 f, u = make_monomer(m, site_properties)
                 molecules[asym_id].append(f)
                 unique_ids[asym_id].extend(u)
+
         else:
             f, u = make_monomer(sites, site_properties)
             molecules[asym_id] = [f]
