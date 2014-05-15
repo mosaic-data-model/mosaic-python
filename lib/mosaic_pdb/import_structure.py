@@ -449,8 +449,9 @@ def _make_monomer(comp_id, sites, site_properties):
                   if set(components[v].atoms['atom_id']).issuperset(atom_ids)]
             if not vs:
                 missing = atom_ids.difference(comp_atom_ids)
+                names = [s[1]+'['+s[0]+']' for s in sites if s[1] in missing]
                 raise ValueError("Atom(s) %s not in component %s"
-                                 % (', '.join(missing), comp_id))
+                                 % (', '.join(names), comp_id))
             variant = None
             if len(vs) == 1:
                 variant = vs[0]
