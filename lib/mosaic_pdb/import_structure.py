@@ -454,11 +454,33 @@ def make_untyped_polymer(asym_id, sites, site_properties, extra_bonds):
         return _make_monomer(comp_ids[0], sites, site_properties)
 
 def _make_monomer(comp_id, sites, site_properties):
+    # Entries from neutron scattering contain atoms of type D,
+    # whose names have a D in place of the H in the corresponding
+    # hydrogens in comp_id. These Ds must be translated to Hs in order
+    # to find the bonds. In the MOSAIC universe, the names starting
+    # with D are kept, but the element is set to H because D is not
+    # a valid chemical element in MOSAIC.
+    mosaic_ids = {}
+    for i in range(len(sites)):
+        s = sites[i]
+        atom_id = s[1]
+        mosaic_ids[atom_id] = atom_id
+        if s[6] == 'D':
+            if atom_id.startswith('D'):
+                atom_id = 'H' + atom_id[1:]
+            mosaic_ids[atom_id] = s[1]
+            sites[i] = (s[0], atom_id) + s[2:6] + ('H',) + s[7:]
+    # Heavy water has its own chemical component, DOD, with atoms
+    # of type D. In order to make the special treatment above work
+    # for this, DOD is replaced by HOH.
+    if comp_id == 'DOD':
+        comp_id = 'HOH'
+
     atom_ids = set(s[1] for s in sites)
     comp = components[comp_id]
     comp_atom_ids = set(comp.atoms['atom_id'])
     if hasattr(comp, 'bonds'):
-        bonds = tuple((x['atom_id_1'], x['atom_id_2'],
+        bonds = tuple((mosaic_ids[x['atom_id_1']], mosaic_ids[x['atom_id_2']],
                        bond_order(x.get('value_order')))
                       for x in comp.bonds
                       if x['atom_id_1'] in atom_ids
@@ -471,8 +493,8 @@ def _make_monomer(comp_id, sites, site_properties):
            and "O5'" in atom_ids:
             # Provide a quick fix for a common case in the PDB, to avoid
             # having lots of DNA structures fail for a trivial reason
-            comp_atom_ids.add("HO5'")
-            bonds = bonds + (("HO5'", "O5'", 'single'),)
+            comp_atom_ids.add(mosaic_ids["HO5'"])
+            bonds = bonds + ((mosaic_ids["HO5'"], "O5'", 'single'),)
         else:
             # Variants exist only for amino acids. Find those that match
             # the atom_ids in the current monomer.
@@ -564,7 +586,7 @@ def _make_monomer(comp_id, sites, site_properties):
         atom_sites[atom_id] = atom_sites.get(atom_id, [])
         atom_sites[atom_id].append(unique_id)
         site_properties[unique_id] = (x, y, z, occupancy, u_iso)
-    atoms = tuple(Atom(atom_id, _make_atom_descriptor(atom_type),
+    atoms = tuple(Atom(mosaic_ids[atom_id], _make_atom_descriptor(atom_type),
                        len(atom_sites[atom_id]))
                   for atom_id, atom_type in zip(atom_ids, atom_types))
     unique_ids = tuple(sum((atom_sites[atom_id] for atom_id in atom_ids), []))
@@ -797,7 +819,7 @@ def make_crystal(structure, model_number, universes):
                 if atom[6] == 'O':
                     ms.append([atom])
                 else:
-                    assert atom[6] == 'H'
+                    assert atom[6] in ['H', 'D']
                     ms[-1].append(atom)
             molecules[asym_id] = []
             for m in ms:
