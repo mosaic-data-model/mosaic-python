@@ -124,7 +124,6 @@ class MMCIFStructure(object):
         else:
             raise MMCIFError("No input structure given")
 
-        self.experiment = {}
         self.cell_parameters = {}
         self.symmetry = {}
         self.entities = OrderedDict()
@@ -141,7 +140,7 @@ class MMCIFStructure(object):
         self.modified = False
         parser.parseToObjects(cell=self.cell_parameters,
                               symmetry=self.symmetry,
-                              exptl=self.experiment,
+                              exptl=self.getPDBCodeFromExptl,
                               entity=self.addEntity,
                               entity_name_com=self.addEntityName,
                               entity_poly=self.addPolymerInfo,
@@ -154,11 +153,6 @@ class MMCIFStructure(object):
                               atom_site_anisotrop=self.addAnisoU)
         if self.structure_file is not None:
             self.structure_file.close()
-        if 'entry_id' in self.experiment:
-            if self.pdb_code is None:
-                self.pdb_code = self.experiment['entry_id']
-            else:
-                assert self.pdb_code == self.experiment['entry_id']
         if len(self.cell_parameters) == 0 \
                or (self.cell_parameters['length_a'] ==
                    self.cell_parameters['length_b'] ==
@@ -213,6 +207,13 @@ class MMCIFStructure(object):
             return False
         assert value in [None, '.']
         return None
+
+    def getPDBCodeFromExptl(self, indices, data):
+        entry_id = self.getField('entry_id', indices, data)
+        if self.pdb_code is None:
+            self.pdb_code = entry_id
+        else:
+            assert self.pdb_code == entry_id
 
     def addEntity(self, indices, data):
         data = dict((label, data[index])
