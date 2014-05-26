@@ -284,13 +284,29 @@ class MMCIFStructure(object):
                 # to generate symmetry equivalents explicitly.
                 pass
         elif self.getField('conn_type_id', indices, data) == 'covale':
-            asym1, comp1, seq1, atom1, asym2, comp2, seq2, atom2, value_order = \
-                   [self.getField(f, indices, data)
-                    for f in ['ptnr1_label_asym_id', 'ptnr1_label_comp_id',
-                              'ptnr1_label_seq_id', 'ptnr1_label_atom_id',
-                              'ptnr2_label_asym_id', 'ptnr2_label_comp_id',
-                              'ptnr2_label_seq_id', 'ptnr2_label_atom_id',
-                              'pdbx_value_order']]
+            bond = ()
+            for f in ['ptnr1_label_asym_id', 'ptnr1_label_comp_id',
+                      ('ptnr1_label_seq_id', 'ptnr1_auth_seq_id'),
+                      'ptnr1_label_atom_id',
+                      'ptnr2_label_asym_id', 'ptnr2_label_comp_id',
+                      ('ptnr2_label_seq_id', 'ptnr2_auth_seq_id'),
+                      'ptnr2_label_atom_id',
+                      'pdbx_value_order']:
+                if isinstance(f, tuple):
+                    value = None
+                    for ff in f:
+                        value = self.getField(ff, indices, data)
+                        if value not in [None, '.']:
+                            break
+                    if value in [None, '.']:
+                        raise ValueError('Field %s has invalid value %s'
+                                         % (ff, value))
+                    else:
+                        bond += (value,)
+                else:
+                    bond += (self.getField(f, indices, data),)
+            asym1, comp1, seq1, atom1, asym2, comp2, seq2, atom2, \
+                value_order  = bond
             self.extra_bonds.append(((asym1, comp1, seq1, atom1),
                                      (asym2, comp2, seq2, atom2),
                                      value_order))
@@ -315,8 +331,9 @@ class MMCIFStructure(object):
         entity = self.entities[self.molecules[asym_id]['entity_id']]
         is_polymer = entity['type']  == 'polymer' \
                      and 'polymer_type' in entity
+        is_multimer = entity['type']  == 'polymer' \
+                      and 'polymer_type' not in entity
         if is_polymer:
-            seq_id_string = data[indices['label_seq_id']] 
             try:
                 seq_id = int(data[indices['label_seq_id']])
             except ValueError:
@@ -325,6 +342,24 @@ class MMCIFStructure(object):
             if seq_id <= 0:
                 raise ValueError('invalid seq_id %d for atom id %s'
                                  % (seq_id, unique_id))
+            ins_code = self.getField('pdbx_PDB_ins_code', indices, data)
+        elif is_multimer:
+            # These are mostly sugars. The consist of several
+            # monomers, which however have no seq_id because in
+            # general they are not linear. The only way to uniquely
+            # identify the monomers at this time is the auth_seq_id
+            # field. The PDB is working on a better scheme.
+            try:
+                seq_id = int(data[indices['label_seq_id']])
+            except ValueError:
+                try:
+                    seq_id = int(data[indices['auth_seq_id']])
+                except ValueError:
+                    raise ValueError('non-numeric label_seq_id %s '
+                                     'and auth_seq_id %s for atom id %s'
+                                     % (data[indices['label_seq_id']],
+                                        data[indices['auth_seq_id']],
+                                        unique_id))
             ins_code = self.getField('pdbx_PDB_ins_code', indices, data)
         else:
             seq_id = None
@@ -337,7 +372,7 @@ class MMCIFStructure(object):
         while len(self.models) < model_number:
             self.models.append(OrderedDict())
         model = self.models[model_number - 1]
-        if is_polymer:
+        if is_polymer or is_multimer:
             molecule = model.get(asym_id, [[]])
             monomer = molecule[-1]
             if len(monomer) > 0 and \
@@ -432,26 +467,21 @@ def make_monomer(sites, site_properties):
         # Make a standard monomer
         return _make_monomer(comp_ids[0], sites, site_properties)
 
-def make_untyped_polymer(asym_id, sites, site_properties, extra_bonds):
-    comp_ids = [s[3] for s in sites]
-    if len(set(comp_ids)) > 1:
-        # More than one comp_id, but no separate seq_ids. Make individual
-        # monomers and assemble them into a fragment. Check for covalent
-        # bonds between the monomers.
-        ms = [_make_monomer(comp_id, list(comp_sites), site_properties)
-              for comp_id, comp_sites in it.groupby(sites, lambda s: s[3])]
-        fs = [f for f, u in ms]
-        us = [u for f, u in ms]
-        bonds = [("%s.%s" % (a1[1], a1[3]),
-                  "%s.%s" % (a2[1], a2[3]),
-                  bond_order(value_order))
-                 for a1, a2, value_order in extra_bonds
-                 if a1[0] == asym_id and a2[0] == asym_id]
-        species = '-'.join(f.label.split('_')[0] for f in fs)
-        return Fragment(species, species, fs, (), bonds), sum(us, ())
-    else:
-        # Make a monomer
-        return _make_monomer(comp_ids[0], sites, site_properties)
+def make_multimer(asym_id, sites, site_properties, extra_bonds):
+    # Polymers without a polymer type. Make individual monomers and
+    # assemble them into a fragment. Check for covalent bonds between
+    # the monomers.
+    ms = [_make_monomer(monomer_sites[0][3], monomer_sites, site_properties)
+          for monomer_sites in sites]
+    fs = [f for f, u in ms]
+    us = [u for f, u in ms]
+    bonds = [("%s_%s.%s" % (a1[1], a1[2], a1[3]),
+              "%s_%s.%s" % (a2[1], a2[2], a2[3]),
+              bond_order(value_order))
+             for a1, a2, value_order in extra_bonds
+             if a1[0] == asym_id and a2[0] == asym_id]
+    species = '-'.join(f.label.split('_')[0] for f in fs)
+    return Fragment(species, species, fs, (), bonds), sum(us, ())
 
 def _make_monomer(comp_id, sites, site_properties):
     # Entries from neutron scattering contain atoms of type D,
@@ -808,8 +838,8 @@ def make_crystal(structure, model_number, universes):
             # this seems to be undocumented. Sugars are labelled as
             # polymers, but have no polymer_type. They have one or
             # two monomers but all atoms have '.' in the seq_id field.
-            f, u = make_untyped_polymer(asym_id, sites, site_properties,
-                                        structure.extra_bonds)
+            f, u = make_multimer(asym_id, sites, site_properties,
+                                 structure.extra_bonds)
             molecules[asym_id] = [f]
             unique_ids[asym_id].extend(u)
 
