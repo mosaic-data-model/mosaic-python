@@ -509,6 +509,7 @@ def _make_monomer(comp_id, sites, site_properties):
     atom_ids = set(s[1] for s in sites)
     comp = components[comp_id]
     comp_atom_ids = set(comp.atoms['atom_id'])
+    species = comp.id
     if hasattr(comp, 'bonds'):
         bonds = tuple((mosaic_ids[x['atom_id_1']], mosaic_ids[x['atom_id_2']],
                        bond_order(x.get('value_order')))
@@ -517,89 +518,66 @@ def _make_monomer(comp_id, sites, site_properties):
                          and x['atom_id_2'] in atom_ids)
     else:
         bonds = ()
-    species = None
-    if not comp_atom_ids.issuperset(atom_ids):
-        if atom_ids.difference(comp_atom_ids) == set(["HO5'"]) \
-           and "O5'" in atom_ids:
-            # Provide a quick fix for a common case in the PDB, to avoid
-            # having lots of DNA structures fail for a trivial reason
-            comp_atom_ids.add(mosaic_ids["HO5'"])
-            bonds = bonds + ((mosaic_ids["HO5'"], "O5'", 'single'),)
-        else:
-            # Variants exist only for amino acids. Find those that match
-            # the atom_ids in the current monomer.
-            vs = [v for v in variants.get(comp_id, [])
-                  if set(components[v].atoms['atom_id']).issuperset(atom_ids)]
-            if not vs:
-                missing = atom_ids.difference(comp_atom_ids)
-                names = [s[1]+'['+s[0]+']' for s in sites if s[1] in missing]
-                raise ValueError("Atom(s) %s not in component %s"
-                                 % (', '.join(names), comp_id))
-            variant = None
-            if len(vs) == 1:
-                variant = vs[0]
-            else:
-                diff = [len(set(components[v].atoms['atom_id'])
-                            .difference(atom_ids))
-                        for v in vs]
-                if sum(d == 0 for d in diff) == 1:
-                    variant = vs[diff.index(0)]
-                else:
-                    seq_id = sites[0][4]
-                    if seq_id == 1:
-                        # N-terminal variants have LSN3 in their name
-                        vs = [v for v in vs if 'LSN3' in v]
-                        if len(vs) == 1:
-                            variant = vs[0]
-                        else:
-                            diff = [len(set(components[v].atoms['atom_id'])
-                                        .difference(atom_ids))
-                                    for v in vs]
-                            if sum(d == 0 for d in diff) == 1:
-                                variant = vs[diff.index(0)]
-            if variant is None:
-                # Don't consider variants with additional heavy atoms
-                # if there are variants that differ only in protons
-                no_extra_heavy = []
-                for v in vs:
-                    extra = set([e[1] for e in components[v].atoms.entries
-                                 if e[0] not in atom_ids])
-                    if not extra.difference(set(['H'])):
-                        no_extra_heavy.append(v)
-                if no_extra_heavy:
-                    vs = no_extra_heavy
-                if len(vs) == 1:
-                    variant = vs[0]
-            if variant is None:
-                # In case of variants of variants, retain the simplest one
-                remove = []
-                for i in range(len(vs)):
-                    for j in range(len(vs)):
-                        if j != i and vs[j].startswith(vs[i]):
-                            remove.append(j)
-                remove.sort(reverse=True)
-                for i in remove:
-                    del vs[i]
-                if len(vs) == 1:
-                    variant = vs[0]
-            if variant is None:
-                # If we get here, there are multiple variants that
-                # describe supersets of the sites we have. There is
-                # not enough information to choose between them,
-                # so we just pick an arbitrary one as a source
-                # for bonds etc. The underlying assumption is that
-                # the bond structures for the given subset of atoms
-                # is the same in all variants.
-                # The fragment label is comp.three_letter_code, which
-                # is the same for all variants anyway. For the
-                # fragment species, we use the generic three-letter
-                # code as well for the case of a non-unique variant.
-                variant = vs[0]
-                species = components[variant].three_letter_code
-            comp = components[variant]
+
+    # This part deals with monomers that contain atoms which are
+    # not in the component dictionary entry. If these are not
+    # hydrogens, this is an error. For excess hydrogens,
+    # the dictionary of protonation variants should contain a
+    # matching entry. However, it is currently very incomplete,
+    # meaning that many hydrogens cannot be verified, and do
+    # not have bond information.
+    extra_atoms = atom_ids.difference(comp_atom_ids)
+    if extra_atoms:
+        if not all(a.startswith('H') for a in extra_atoms):
+            names = [s[1]+'['+s[0]+']' for s in sites if s[1] in extra_atoms]
+            raise ValueError("Atom(s) %s not in component %s"
+                             % (', '.join(names), comp_id))
+        # Find the protonation variants for the current monomer
+        # that match the atom_ids.
+        vs = [v for v in variants.get(comp_id, [])
+              if set(components[v].atoms['atom_id']).issuperset(atom_ids)]
+        if len(vs) == 1:
+            # If there is exactly one matching variant, use it.
+            comp = components[vs[0]]
             comp_atom_ids = set(comp.atoms['atom_id'])
-    if species is None:
-        species = comp.id
+            species = comp.three_letter_code
+            if hasattr(comp, 'bonds'):
+                bonds = tuple((mosaic_ids[x['atom_id_1']],
+                               mosaic_ids[x['atom_id_2']],
+                               bond_order(x.get('value_order')))
+                              for x in comp.bonds
+                              if x['atom_id_1'] in atom_ids
+                                 and x['atom_id_2'] in atom_ids)
+            else:
+                bonds = ()
+        else:
+            # Keep the main component and accept any additional hydrogens.
+            # Construct bonds for them based on a distance criterion.
+            p = dict((s[1], np.array(s[7:10])) for s in sites)
+            e = dict((s[1], s[6]) for s in sites)
+            rbsq = {'C': 0.115**2, 'N': 0.105**2, 'P': 0.16**2,
+                    'O': 0.105**2, 'S': 0.15**2}
+            for hydrogen_id in extra_atoms:
+                comp_atom_ids.add(hydrogen_id)
+                ph = p[hydrogen_id]
+                close = [atom_id
+                         for atom_id, position in p.items()
+                         if (not atom_id.startswith('H'))
+                            and np.sum((position-ph)**2) < rbsq[e[atom_id]]]
+                if len(close) > 1:
+                     name = [s[1]+'['+s[0]+']'
+                             for s in sites if s[1] == hydrogen_id][0]
+                     names = [s[1]+'['+s[0]+']'
+                              for s in sites if s[1] in close]
+                     raise ValueError("Cannot identify a unique bonding"
+                                      " partner for atom %s (close atoms"
+                                      " are %s)"
+                                      % (name, ', '.join(names)))
+                if len(close) > 0:
+                    bonds = bonds + ((mosaic_ids[close[0]],
+                                      mosaic_ids[hydrogen_id], 'single'),)
+
+    # Construct the MOSAIC fragment
     atom_sites = {}
     atom_ids = []
     atom_types = []
