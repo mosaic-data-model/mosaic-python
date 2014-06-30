@@ -145,6 +145,25 @@ class UniverseTest(unittest.TestCase):
             self.assertEqual(bonds[2*i+1, 0], 3*i+1)
             self.assertEqual(bonds[2*i+1, 1], 3*i+2)
 
+    def test_polymers(self):
+        peptide_chain = M.Polymer('chain', 'ALA,LYS',
+                                  (M.Fragment('ALA1', 'ALA', (),
+                                              (M.Atom('CA',
+                                                      M.CGParticle('CA'), 1),),
+                                              ()),
+                                   M.Fragment('LYS2', 'LYS', (),
+                                              (M.Atom('CA',
+                                                      M.CGParticle('CA'), 1),),
+                                              ())),
+                                  (('ALA1.CA', 'LYS2.CA', ''),),
+                                  'polypeptide')
+        protein = M.Fragment('protein', 'protein', (peptide_chain,), (), ())
+        universe = M.Universe('infinite', [(protein, 1)])
+        array_universe = self.factory(universe)
+        array_peptide_chain = array_universe.molecules[0][0].fragments[0]
+        self.assert_(array_peptide_chain.is_polymer)
+        self.assertEqual(array_peptide_chain.polymer_type, 'polypeptide')
+
     def test_selections(self):
         universe = self.am_universe
         s = AM.Selection(universe, N.array([0, 2], N.uint8), 'atom')

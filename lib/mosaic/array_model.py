@@ -84,7 +84,9 @@ class Universe(api.MosaicUniverse):
         self._molecule_array = N.empty((nmols,), molecule_array_dtype)
 
         def store_fragment(f, iparent, ifrag, iatom, ibond, isite,
-                           path, atom_index):
+                           polymers, path, atom_index):
+            if f.is_polymer:
+                polymers.append((ifrag, symbol_id[f.polymer_type]))
             self._fragment_array[ifrag]['parent_index'] = iparent
             self._fragment_array[ifrag]['label_symbol_index'] = \
                                                          symbol_id[f.label]
@@ -95,7 +97,8 @@ class Universe(api.MosaicUniverse):
             for ff in f.fragments:
                 ifrag, iatom, ibond, isite = \
                        store_fragment(ff, iparent, ifrag, iatom, ibond, isite,
-                                      '.'.join([path, ff.label]), atom_index)
+                                      polymers, '.'.join([path, ff.label]),
+                                      atom_index)
             for a in f.atoms:
                 atom_index['.'.join([path, a.label])] = iatom
                 self._atom_array[iatom]['parent_index'] = iparent
@@ -138,11 +141,9 @@ class Universe(api.MosaicUniverse):
             self._molecule_array[imol]['first_atom_index'] = iatom
             self._molecule_array[imol]['first_bond_index'] = ibond
             self._molecule_array[imol]['first_site_index'] = isite
-            if fragment.is_polymer:
-                polymers.append((ifrag, symbol_id[fragment.polymer_type]))
             ifrag, iatom, ibond, isite = \
                    store_fragment(fragment, 0, ifrag, iatom, ibond, isite,
-                                  '', {})
+                                  polymers, '', {})
             self._molecule_array[imol]['number_of_atoms'] = \
                        iatom - self._molecule_array[imol]['first_atom_index']
             self._molecule_array[imol]['number_of_bonds'] = \
