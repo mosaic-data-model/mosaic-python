@@ -34,3 +34,7 @@ XML I/O
 .. automodule:: mosaic.xml_io
    :members:
 
+Molecular structure utilities
+=============================
+.. automodule:: mosaic.molecular_structure
+   :members:

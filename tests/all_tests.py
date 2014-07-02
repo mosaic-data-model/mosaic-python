@@ -27,6 +27,7 @@ def suite():
     test_suite.addTests(equivalence_tests.suite())
     test_suite.addTests(hdf5_tests.suite())
     test_suite.addTests(xml_tests.suite())
+    test_suite.addTests(molecular_structure_tests.suite())
     test_suite.addTests(pdb_tests.suite())
     return test_suite
 
