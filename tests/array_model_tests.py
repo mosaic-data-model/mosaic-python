@@ -39,6 +39,16 @@ class UniverseTest(unittest.TestCase):
         self.assertEqual(self.am_universe.cell_shape, "infinite")
         self.assertEqual(self.am_universe.convention, "my_own")
 
+    def test_return_types(self):
+        self.assertTrue(type(self.am_universe.number_of_molecules) is int)
+        self.assertTrue(type(self.am_universe.number_of_atoms) is int)
+        self.assertTrue(type(self.am_universe.number_of_sites) is int)
+        self.assertTrue(type(self.am_universe.number_of_bonds) is int)
+        fragment = self.am_universe.molecules[0][0]
+        self.assertTrue(type(fragment.number_of_atoms) is int)
+        self.assertTrue(type(fragment.number_of_sites) is int)
+        self.assertTrue(type(fragment.number_of_bonds) is int)
+        
     def test_properties(self):
         mm_masses = M.TemplateAtomProperty(self.universe, "mass", "amu",
                                            N.array([1., 1., 16.], N.float32))

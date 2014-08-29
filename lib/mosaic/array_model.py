@@ -381,9 +381,10 @@ class Fragment(api.MosaicFragment):
         ifrag = self._ifrag
         nfrag = ifrag + \
                 self._universe._fragment_array[ifrag]['number_of_fragments']
-        return N.sum(N.logical_and(
-                    self._universe._atom_array['parent_index'] >= ifrag,
-                    self._universe._atom_array['parent_index'] < nfrag))
+        return int(N.sum(N.logical_and(
+                           self._universe._atom_array['parent_index'] >= ifrag,
+                           self._universe._atom_array['parent_index'] < nfrag),
+                         dtype=N.int64))
 
     @property
     def number_of_sites(self):
@@ -393,8 +394,9 @@ class Fragment(api.MosaicFragment):
         mask = N.logical_and(
                     self._universe._atom_array['parent_index'] >= ifrag,
                     self._universe._atom_array['parent_index'] < nfrag)
-        return N.sum(N.repeat(self._universe._atom_array['number_of_sites'],
-                              mask))
+        return int(N.sum(N.repeat(self._universe._atom_array['number_of_sites'],
+                                  mask),
+                         dtype=N.int64))
 
     @property
     def number_of_bonds(self):
@@ -405,8 +407,9 @@ class Fragment(api.MosaicFragment):
                     self._universe._bond_array['atom_index_1'])
         a2 = N.take(self._universe._atom_array['parent_index'],
                     self._universe._bond_array['atom_index_2'])
-        return N.sum(N.logical_and(N.logical_and(a1 >= ifrag, a1 < nfrag),
-                                   N.logical_and(a2 >= ifrag, a2 < nfrag)))
+        return int(N.sum(N.logical_and(N.logical_and(a1 >= ifrag, a1 < nfrag),
+                                       N.logical_and(a2 >= ifrag, a2 < nfrag)),
+                         dtype=N.int64))
 
 
 class Atom(api.MosaicAtom):
