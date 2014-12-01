@@ -165,7 +165,9 @@ except IOError:
     variants = {}
 
     for url in chem_comp_urls:
-        buffer = StringIO(urlopen(url).read())
+        handle = urlopen(url)
+        buffer = StringIO(handle.read())
+        handle.close()
         f = bytes2text(gzip.GzipFile(fileobj=buffer))
         parser = mmcif.MMCIFParser(file_object=f)
         for item_type, item in parser.parse():
