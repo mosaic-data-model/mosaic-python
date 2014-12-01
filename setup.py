@@ -33,6 +33,7 @@ class TestCommand(Command):
     def run(self):
         sys.path.insert(0, os.path.join(root_dir, package_dir))
         sys.path.insert(0, os.path.join(root_dir, test_dir))
+        os.chdir(test_dir)
         import all_tests
         t = TextTestRunner(verbosity=2)
         t.run(all_tests.suite())

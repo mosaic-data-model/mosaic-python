@@ -17,6 +17,7 @@ import immutable_model_tests
 import equivalence_tests
 import hdf5_tests
 import xml_tests
+import molecular_structure_tests
 import pdb_tests
 
 def suite():
