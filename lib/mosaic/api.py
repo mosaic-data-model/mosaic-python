@@ -1395,7 +1395,7 @@ def validate_type(obj, cls, text):
 def validate_value(value, allowed_values, name):
     if not value in allowed_values:
         raise ValueError("%s must be one of %s"
-                         % (name, ", ".join(allowed_values)))
+                         % (name, ", ".join([str(v) for v in allowed_values])))
 
 
 def validate_ascii_string(s, text):
