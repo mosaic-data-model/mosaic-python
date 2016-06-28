@@ -10,7 +10,7 @@ cp -rp ../../lib/mosaic code/python-packages
 cp -rp ../../lib/mosaic_pdb code/python-packages
 cp -rp ../../tests/*_tests.py code/tests
 rm code/tests/all_tests.py  # useless
-rm code/tests/pdb_test.py   # requires an external file
+rm code/tests/pdb_tests.py   # requires an external file
 for fn in `ls code/tests/*.py`; do
     python ../fix_test_runner.py $fn
 done
