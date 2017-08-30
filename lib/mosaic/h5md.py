@@ -31,7 +31,8 @@ class Trajectory(object):
     def __init__(self, hdf5_group_or_filename, universe=None,
                  author_name='unknown', author_email=None,
                  file_mode=None,
-                 float_type=np.float32):
+                 float_type=np.float32,
+                 mosaic_data = {}):
         """
         :param hdf5_group_or_filename: a group in an open HDF5 file,
                                        or a string interpreted as a file name
@@ -40,6 +41,7 @@ class Trajectory(object):
         :type file_mode:  str
         :param universe: the universe associated with the trajectory
         :type universe:  :class:`mosaic.api.MosaicUniverse`
+        :param mosaic_data: additional MOSAIC data items to be stored
         """
         if isstring(hdf5_group_or_filename):
             if file_mode is None:
@@ -52,20 +54,23 @@ class Trajectory(object):
             self._close = False
         self.float_type = float_type
 
-        self._mosaic_group(universe)
+        self._mosaic_group(universe, mosaic_data)
         self._create_h5md_group(author_name, author_email)
         self._create_particles_group()
 
-    def _mosaic_group(self, universe):
+    def _mosaic_group(self, universe, mosaic_data):
         if universe is None:
             self.mosaic = self.root['mosaic']
             self.store = HDF5Store(self.mosaic)
             self.universe = self.store.retrieve('universe')
+            assert len(mosaic_data) == 0
         else:
             self.mosaic = self.root.create_group('mosaic')
             self.store = HDF5Store(self.mosaic)
             self.universe = universe
             self.store.store('universe', universe)
+            for name, item in mosaic_data.items():
+                self.store.store(name, item)
 
     def _create_h5md_group(self, author_name, author_email=None):
         if 'h5md' not in self.root:
@@ -205,7 +210,7 @@ class Trajectory(object):
     def read_atom(self, index, first=0, last=None, skip=None):
         if index < 0 or index >= self.position_dataset.shape[1]:
             raise IndexError
-        xyz = self.position_dataset[first:last:skip, i, :]
+        xyz = self.position_dataset[first:last:skip, index, :]
         if self.edge_dataset is None:
             return xyz
         edges = self.edge_dataset[first:last:skip, :]
