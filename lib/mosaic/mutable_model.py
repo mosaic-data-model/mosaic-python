@@ -514,8 +514,8 @@ class Universe(MosaicObject, api.MosaicUniverse):
                             in zip(self.molecules, other.molecules))
 
     def __hash__(self):
-        return hash(self.cell_shape) \
-               + len(self.molecules)
+        return hash(self.cell_shape) + hash(self.symmetry_transformations) \
+               + hash(self.convention) + sum([c*hash(f) for f, c in self.molecules])
 
     def __str__(self):
         mol_str = ', '.join("(%s('%s'), %d)"
